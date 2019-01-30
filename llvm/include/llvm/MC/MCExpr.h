@@ -296,10 +296,10 @@ public:
     VK_AMDGPU_REL64,         // symbol@rel64
 
     VK_TPREL,
-    VK_DTPREL
+    VK_DTPREL,
 
     VK_DIGITAL_HI,            // Digital 16bit CPU
-    VK_DIGITAL_LO,            // Digital 16bit CPU
+    VK_DIGITAL_LO            // Digital 16bit CPU
   };
 
 private:

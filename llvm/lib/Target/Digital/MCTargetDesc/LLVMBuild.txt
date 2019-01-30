@@ -19,5 +19,5 @@
 type = Library
 name = DigitalDesc
 parent = Digital
-required_libraries = MC DigitalInfo Support
+required_libraries = MC DigitalAsmPrinter DigitalInfo Support
 add_to_library_groups = Digital
