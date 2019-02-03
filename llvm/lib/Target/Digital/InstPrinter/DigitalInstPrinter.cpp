@@ -25,7 +25,7 @@ using namespace llvm;
 
 // Include the auto-generated portion of the assembly writer.
 #define PRINT_ALIAS_INSTR
-#include "DigitalGenAsmWriter.inc"
+//#include "DigitalGenAsmWriter.inc"
 
 void DigitalInstPrinter::printInst(const MCInst *MI, raw_ostream &O,
                                   StringRef Annot) {

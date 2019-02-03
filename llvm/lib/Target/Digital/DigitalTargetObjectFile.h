@@ -16,3 +16,4 @@ class DigitalTargetMachine;
 
   };
 } // end namespace llvm
+#endif

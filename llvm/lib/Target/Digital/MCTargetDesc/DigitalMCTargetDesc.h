@@ -15,9 +15,11 @@
 #define LLVM_LIB_TARGET_DIGITAL_MCTARGETDESC_DIGITALMCTARGETDESC_H
 
 namespace llvm {
+
 class Target;
 
-extern Target TheDigitalTarget;
+Target &getTheDigitalTarget();
+
 
 } // End llvm namespace
 
@@ -30,7 +32,7 @@ extern Target TheDigitalTarget;
 #define GET_INSTRINFO_ENUM
 #include "DigitalGenInstrInfo.inc"
 
-#define GET_SUBTARGETINFO_ENUM
-#include "DigitalGenSubtargetInfo.inc"
+//#define GET_SUBTARGETINFO_ENUM
+//#include "DigitalGenSubtargetInfo.inc"
 
 #endif

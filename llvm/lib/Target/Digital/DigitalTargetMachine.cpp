@@ -23,13 +23,31 @@ using namespace llvm;
 
 extern "C" void LLVMInitializeDigitalTarget() {
   // Register the target.
-  RegisterTargetMachine<DigitalebTargetMachine> X(TheDigitalTarget);
+  RegisterTargetMachine<DigitalTargetMachine> X(getTheDigitalTarget());
 }
 
 static Reloc::Model getEffectiveRelocModel(Optional<Reloc::Model> RM) {
   if (!RM.hasValue())
     return Reloc::PIC_;
   return *RM;
+}
+
+static StringRef computeDataLayout(const Triple &T) {
+  // Laser is Little Indian
+  std::string Ret = "";
+
+  Ret += "E"; // Big endian
+
+  Ret += "-m:m"; // ELF name mangling
+  // first value is pointer size, and the second value is both ABI
+  //   and preferred alignment.
+  Ret += "-p:16:16"; // 16-bit pointers, 16 bit aligned
+  // Alignments for 16 bit integers.
+  Ret += "-i16:16"; // 16 bit integers, 16 bit aligned
+  //Ret += "-a:0:16"; // 16 bit alignment of objects of aggregate type
+  Ret += "-n16";    // 16 bit native integer width
+  Ret += "-S16";    // 16 bit natural stack alignment
+  return Ret;
 }
 
 // DataLayout --> Big-endian, 32-bit pointer/ABI/alignment
@@ -39,69 +57,20 @@ static Reloc::Model getEffectiveRelocModel(Optional<Reloc::Model> RM) {
 // offset from the stack/frame pointer, using StackGrowsUp enables
 // an easier handling.
 // Using CodeModel::Large enables different CALL behavior.
-DigitalTargetMachine::DigitalTargetMachine(const Target &T, const Triple &TT,
-                                     StringRef CPU, StringRef FS,
-                                     const TargetOptions &Options,
-                                     Optional<Reloc::Model> RM,
-                                     CodeModel::Model CM, CodeGenOpt::Level OL,
-                                     bool isLittle)
-  //- Default is big endian
-    : LLVMTargetMachine(T, "E-m:m-p:16:16-i16:16-n16-S16", TT,
-                        CPU, FS, Options, getEffectiveRelocModel(RM), CM,
-                        OL),
-      isLittle(isLittle), TLOF(make_unique<DigitalTargetObjectFile>()),
-      ABI(DigitalABIInfo::computeTargetABI()),
-      DefaultSubtarget(TT, CPU, FS, isLittle, *this) {
-  // initAsmInfo will display features by llc -march=digital -mcpu=help on 3.7 but
-  // not on 3.6
+DigitalTargetMachine::DigitalTargetMachine( const Target &T, const Triple &TT,
+                                       StringRef CPU, StringRef FeatureString,
+                                       const TargetOptions &Options,
+                                       Optional<Reloc::Model> RM,
+                                       Optional<CodeModel::Model> CodeModel,
+                                       CodeGenOpt::Level OptLevel, bool JIT)
+    : LLVMTargetMachine(T, computeDataLayout(TT), TT, CPU, FeatureString,
+                        Options, getEffectiveRelocModel(RM),
+                        getEffectiveCodeModel(CodeModel, CodeModel::Small), OptLevel),
+      TLOF(make_unique<DigitalTargetObjectFile>()) {
   initAsmInfo();
 }
 
 DigitalTargetMachine::~DigitalTargetMachine() {}
-
-void DigitalebTargetMachine::anchor() { }
-
-DigitalebTargetMachine::DigitalebTargetMachine(const Target &T, const Triple &TT,
-                                         StringRef CPU, StringRef FS,
-                                         const TargetOptions &Options,
-                                         Optional<Reloc::Model> RM,
-                                         CodeModel::Model CM,
-                                         CodeGenOpt::Level OL)
-    : DigitalTargetMachine(T, TT, CPU, FS, Options, RM, CM, OL, false) {}
-
-void DigitalelTargetMachine::anchor() { }
-
-DigitalelTargetMachine::DigitalelTargetMachine(const Target &T, const Triple &TT,
-                                         StringRef CPU, StringRef FS,
-                                         const TargetOptions &Options,
-                                         Optional<Reloc::Model> RM,
-                                         CodeModel::Model CM,
-                                         CodeGenOpt::Level OL)
-    : DigitalTargetMachine(T, TT, CPU, FS, Options, RM, CM, OL, true) {}
-
-const DigitalSubtarget *
-DigitalTargetMachine::getSubtargetImpl(const Function &F) const {
-  Attribute CPUAttr = F.getFnAttribute("target-cpu");
-  Attribute FSAttr = F.getFnAttribute("target-features");
-
-  std::string CPU = !CPUAttr.hasAttribute(Attribute::None)
-                        ? CPUAttr.getValueAsString().str()
-                        : TargetCPU;
-  std::string FS = !FSAttr.hasAttribute(Attribute::None)
-                       ? FSAttr.getValueAsString().str()
-                       : TargetFS;
-
-  auto &I = SubtargetMap[CPU + FS];
-  if (!I) {
-    // This needs to be done before we create a new subtarget since any
-    // creation will depend on the TM and the code generation flags on the
-    // function that reside in TargetOptions.
-    resetTargetOptions(F);
-    I = llvm::make_unique<DigitalSubtarget>(TargetTriple, CPU, FS, isLittle,
-                                         *this);
-  }
-  return I.get();
-}
 
 namespace {
 //@DigitalPassConfig {
@@ -109,14 +78,10 @@ namespace {
 class DigitalPassConfig : public TargetPassConfig {
 public:
   DigitalPassConfig(DigitalTargetMachine *TM, PassManagerBase &PM)
-    : TargetPassConfig(TM, PM) {}
+    : TargetPassConfig(*TM, PM) {}
 
   DigitalTargetMachine &getDigitalTargetMachine() const {
     return getTM<DigitalTargetMachine>();
-  }
-
-  const DigitalSubtarget &getDigitalSubtarget() const {
-    return *getDigitalTargetMachine().getSubtargetImpl();
   }
 };
 } // namespace

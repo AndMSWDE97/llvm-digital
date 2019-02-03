@@ -14,15 +14,15 @@
 #ifndef DIGITALTARGETASMINFO_H
 #define DIGITALTARGETASMINFO_H
 
-#include "llvm/MC/MCAsmInfo.h"
+#include "llvm/MC/MCAsmInfoELF.h"
 
 namespace llvm {
-  class StringRef;
+  class Triple;
 
-  class DigitalMCAsmInfo : public MCAsmInfo {
-    virtual void anchor();
+  class DigitalELFMCAsmInfo : public MCAsmInfoELF {
+    void anchor() override;
   public:
-    explicit DigitalMCAsmInfo(StringRef TT);
+    explicit DigitalELFMCAsmInfo(const Triple &TheTriple);
   };
 
 } // namespace llvm

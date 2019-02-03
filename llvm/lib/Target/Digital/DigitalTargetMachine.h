@@ -21,22 +21,23 @@ namespace llvm {
 class DigitalTargetMachine : public LLVMTargetMachine {
   std::unique_ptr<TargetLoweringObjectFile> TLOF;
   // Selected ABI
-  DigitalABIInfo ABI;
-  DigitalSubtarget DefaultSubtarget;
+  //DigitalABIInfo ABI;
+ // DigitalSubtarget DefaultSubtarget;
 
-  mutable StringMap<std::unique_ptr<DigitalSubtarget>> SubtargetMap;
+  //mutable StringMap<std::unique_ptr<DigitalSubtarget>> SubtargetMap;
 public:
   DigitalTargetMachine(const Target &T, const Triple &TT, StringRef CPU,
-                    StringRef FS, const TargetOptions &Options,
-                    Optional<Reloc::Model> RM, CodeModel::Model CM,
-                    CodeGenOpt::Level OL);
+                     StringRef FeatureString, const TargetOptions &Options,
+                     Optional<Reloc::Model> RM,
+                     Optional<CodeModel::Model> CodeModel,
+                     CodeGenOpt::Level OptLevel, bool JIT);
   ~DigitalTargetMachine() override;
-
+  /*
   const DigitalSubtarget *getSubtargetImpl() const {
     return &DefaultSubtarget;
-  }
+  }*/
 
-  const DigitalSubtarget *getSubtargetImpl(const Function &F) const override;
+  //const DigitalSubtarget *getSubtargetImpl(const Function &F) const override;
 
   // Pass Pipeline Configuration
   TargetPassConfig *createPassConfig(PassManagerBase &PM) override;
@@ -44,7 +45,7 @@ public:
   TargetLoweringObjectFile *getObjFileLowering() const override {
     return TLOF.get();
   }
-  const DigitalABIInfo &getABI() const { return ABI; }
+  //const DigitalABIInfo &getABI() const { return ABI; }
 };
 
 } // End llvm namespace

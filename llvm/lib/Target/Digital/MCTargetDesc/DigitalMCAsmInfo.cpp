@@ -12,12 +12,12 @@
 //===----------------------------------------------------------------------===//
 
 #include "DigitalMCAsmInfo.h"
-#include "llvm/ADT/StringRef.h"
+#include "llvm/ADT/Triple.h"
 using namespace llvm;
 
-void DigitalMCAsmInfo::anchor() { }
+void DigitalELFMCAsmInfo::anchor() { }
 
-DigitalMCAsmInfo::DigitalMCAsmInfo(StringRef TT) {
+DigitalELFMCAsmInfo::DigitalELFMCAsmInfo(const Triple &TheTriple) {
   IsLittleEndian = false;
   CommentString = ";";
   SupportsDebugInformation = true;
