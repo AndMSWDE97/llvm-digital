@@ -33,20 +33,28 @@ static Reloc::Model getEffectiveRelocModel(Optional<Reloc::Model> RM) {
 }
 
 static StringRef computeDataLayout(const Triple &T) {
-  // Laser is Little Indian
   std::string Ret = "";
 
-  Ret += "E"; // Big endian
+// "E-m:m-p:16:16-i16:16-n16-S16"
+/*
+  Ret += "E";
+  Ret += "-m:m"; 
+  Ret += "-p:16:16"; 
+  Ret += "-i16:16";
+  Ret += "-n16";   
+  Ret += "-S16"; 
+*/
+    Ret += "E"; // Big endian
 
-  Ret += "-m:m"; // ELF name mangling
-  // first value is pointer size, and the second value is both ABI
+  Ret += "-m:e"; // ELF name mangling
+  // first value is pointer size, and the second value is both ABI 
   //   and preferred alignment.
   Ret += "-p:16:16"; // 16-bit pointers, 16 bit aligned
   // Alignments for 16 bit integers.
   Ret += "-i16:16"; // 16 bit integers, 16 bit aligned
-  //Ret += "-a:0:16"; // 16 bit alignment of objects of aggregate type
-  Ret += "-n16";    // 16 bit native integer width
-  Ret += "-S16";    // 16 bit natural stack alignment
+  Ret += "-a:0:16";  // 16 bit alignment of objects of aggregate type
+  Ret += "-n16"; // 16 bit native integer width
+  Ret += "-S16"; // 16 bit natural stack alignment
   return Ret;
 }
 
