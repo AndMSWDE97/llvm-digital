@@ -639,6 +639,7 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::thumb:
   case Triple::x86:
   case Triple::x86_64:
+  case Triple::digital:
     if (T.isOSDarwin())
       return Triple::MachO;
     else if (T.isOSWindows())
@@ -1534,6 +1535,7 @@ bool Triple::isLittleEndian() const {
   case Triple::tcele:
   case Triple::renderscript32:
   case Triple::renderscript64:
+  case Triple::digital:
     return true;
   default:
     return false;
