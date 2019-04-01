@@ -44,6 +44,10 @@ def DigitalAsmWriter : AsmWriter {
  bit isMCAsmWriter = 1;
 }
 
+def DigitalAsmParser : AsmParser {
+  let ShouldEmitMatchRegisterAltName = 1;
+}
+
 //===---------------------------------------------------------------------===//
 // Target Declaration
 //===---------------------------------------------------------------------===//
@@ -51,4 +55,5 @@ def DigitalAsmWriter : AsmWriter {
 def Digital : Target {
   let InstructionSet         = DigitalInstrInfo;
   let AssemblyWriters        = [DigitalAsmWriter];
+  let AssemblyParsers        = [DigitalAsmParser];
 }

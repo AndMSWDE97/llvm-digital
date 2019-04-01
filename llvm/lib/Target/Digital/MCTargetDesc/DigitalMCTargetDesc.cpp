@@ -50,15 +50,13 @@ static MCRegisterInfo *createDigitalMCRegisterInfo(StringRef TT) {
   return X;
 }
 
-static MCInstPrinter *createDigitalMCInstPrinter(const Target &T,
+static MCInstPrinter *createDigitalMCInstPrinter(const Triple &T,
                                                 unsigned SyntaxVariant,
                                                 const MCAsmInfo &MAI,
                                                 const MCInstrInfo &MII,
-                                                const MCRegisterInfo &MRI,
-                                                const MCSubtargetInfo &STI) {
- /// if (SyntaxVariant == 0)
-  //  return new DigitalInstPrinter(MAI, MII, MRI);
-  return 0;
+                                                const MCRegisterInfo &MRI) {
+                                                  
+  return new DigitalInstPrinter(MAI, MII, MRI);
 }
 
 extern "C" void LLVMInitializeDigitalTargetMC() {

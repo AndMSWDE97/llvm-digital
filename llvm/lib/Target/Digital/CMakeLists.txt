@@ -5,7 +5,8 @@ tablegen(LLVM DigitalGenRegisterInfo.inc -gen-register-info)
 tablegen(LLVM DigitalGenInstrInfo.inc -gen-instr-info)
 tablegen(LLVM DigitalGenMCCodeEmitter.inc -gen-emitter)
 tablegen(LLVM DigitalGenMCPseudoLowering.inc -gen-pseudo-lowering)
-#tablegen(LLVM DigitalGenSubtargetInfo.inc -gen-subtarget)
+tablegen(LLVM DigitalGenAsmMatcher.inc -gen-asm-matcher)
+tablegen(LLVM DigitalGenAsmWriter.inc -gen-asm-writer)
 
 add_public_tablegen_target(DigitalCommonTableGen)
 
