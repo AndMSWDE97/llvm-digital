@@ -19,10 +19,10 @@
 namespace llvm {
   class Triple;
 
-  class DigitalELFMCAsmInfo : public MCAsmInfoELF {
+  class DigitalMCAsmInfo : public MCAsmInfoELF {
     void anchor() override;
   public:
-    explicit DigitalELFMCAsmInfo(const Triple &TheTriple);
+    explicit DigitalMCAsmInfo(const Triple &TheTriple);
   };
 
 } // namespace llvm

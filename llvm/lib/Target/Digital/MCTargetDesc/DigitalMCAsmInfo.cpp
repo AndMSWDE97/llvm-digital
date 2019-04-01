@@ -15,9 +15,9 @@
 #include "llvm/ADT/Triple.h"
 using namespace llvm;
 
-void DigitalELFMCAsmInfo::anchor() { }
+void DigitalMCAsmInfo::anchor() { }
 
-DigitalELFMCAsmInfo::DigitalELFMCAsmInfo(const Triple &TheTriple) {
+DigitalMCAsmInfo::DigitalMCAsmInfo(const Triple &TheTriple) {
   IsLittleEndian = false;
   CommentString = ";";
   SupportsDebugInformation = true;

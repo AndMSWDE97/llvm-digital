@@ -16,13 +16,14 @@
 ;===------------------------------------------------------------------------===;
 
 [common]
-subdirectories = InstPrinter MCTargetDesc TargetInfo
+subdirectories = InstPrinter MCTargetDesc TargetInfo AsmParser
 
 [component_0]
 type = TargetGroup
 name = Digital
 parent = Target
 has_asmprinter = 1
+has_asmparser = 1
 
 [component_1]
 type = Library

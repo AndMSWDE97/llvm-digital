@@ -14,12 +14,26 @@
 #ifndef LLVM_LIB_TARGET_DIGITAL_MCTARGETDESC_DIGITALMCTARGETDESC_H
 #define LLVM_LIB_TARGET_DIGITAL_MCTARGETDESC_DIGITALMCTARGETDESC_H
 
+#include "llvm/Config/config.h"
+#include "llvm/MC/MCTargetOptions.h"
+#include "llvm/Support/DataTypes.h"
+#include <memory>
+
 namespace llvm {
 
 class Target;
 
 Target &getTheDigitalTarget();
 
+MCCodeEmitter *createDigitalMCCodeEmitter(const MCInstrInfo &MCII,
+                                        const MCRegisterInfo &MRI,
+                                        MCContext &Ctx);
+
+MCAsmBackend *createDigitalAsmBackend(const Target &T, const MCSubtargetInfo &STI,
+                                    const MCRegisterInfo &MRI,
+                                    const MCTargetOptions &Options);
+
+std::unique_ptr<MCObjectWriter> createDigitalELFObjectWriter(raw_pwrite_stream &OS, uint8_t OSABI, bool Is64Bit);
 
 } // End llvm namespace
 
@@ -31,8 +45,5 @@ Target &getTheDigitalTarget();
 // Defines symbolic names for the Digital instructions.
 #define GET_INSTRINFO_ENUM
 #include "DigitalGenInstrInfo.inc"
-
-//#define GET_SUBTARGETINFO_ENUM
-//#include "DigitalGenSubtargetInfo.inc"
 
 #endif

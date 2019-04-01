@@ -1535,7 +1535,6 @@ bool Triple::isLittleEndian() const {
   case Triple::tcele:
   case Triple::renderscript32:
   case Triple::renderscript64:
-  case Triple::digital:
     return true;
   default:
     return false;

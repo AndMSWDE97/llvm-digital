@@ -15,6 +15,8 @@
 #define LLVM_LIB_TARGET_DIGITAL_DIGITALTARGETMACHINE_H
 
 #include "llvm/Target/TargetMachine.h"
+#include "DigitalTargetMachine.h"
+#include "MCTargetDesc/DigitalMCTargetDesc.h"
 
 namespace llvm {
 
