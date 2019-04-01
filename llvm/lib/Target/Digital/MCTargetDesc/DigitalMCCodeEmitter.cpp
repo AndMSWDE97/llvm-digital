@@ -48,10 +48,12 @@ MCCodeEmitter *createDigitalMCCodeEmitter(const MCInstrInfo &MCII, const MCRegis
 }
 
 void DigitalMCCodeEmitter::encodeInstruction(const MCInst &MI, raw_ostream &OS, SmallVectorImpl<MCFixup> &Fixups, const MCSubtargetInfo &STI) const {
-  // For now, we only support RISC-V instructions with 32-bit length
-  uint16_t Bits = getBinaryCodeForInstr(MI, Fixups, STI);
-  support::endian::write<uint16_t>(OS, Bits, support::little);
-  ++MCNumEmitted; // Keep track of the # of mi's emitted.
+
+	uint16_t Binary = getBinaryCodeForInstr(MI, Fixups, STI);
+  
+	int Size = 4;
+
+	EmitInstruction(Binary, Size, STI, OS);
 }
 
 unsigned DigitalMCCodeEmitter::getMachineOpValue(const MCInst &MI, const MCOperand &MO, SmallVectorImpl<MCFixup> &Fixups, const MCSubtargetInfo &STI) const {

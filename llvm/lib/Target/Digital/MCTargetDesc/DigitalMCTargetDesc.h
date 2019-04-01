@@ -16,6 +16,7 @@
 
 #include "llvm/Config/config.h"
 #include "llvm/MC/MCTargetOptions.h"
+#include "llvm/MC/MCObjectWriter.h"
 #include "llvm/Support/DataTypes.h"
 #include <memory>
 
