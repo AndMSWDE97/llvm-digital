@@ -1,4 +1,5 @@
-//===-- DigitalMCTargetDesc.h - Digital Target Descriptions -------*- C++ -*-===//
+//===-- DigitalMCTargetDesc.h - Digital Target Descriptions -------*- C++
+//-*-===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -15,28 +16,38 @@
 #define LLVM_LIB_TARGET_DIGITAL_MCTARGETDESC_DIGITALMCTARGETDESC_H
 
 #include "llvm/Config/config.h"
-#include "llvm/MC/MCTargetOptions.h"
 #include "llvm/MC/MCObjectWriter.h"
+#include "llvm/MC/MCRegisterInfo.h"
+#include "llvm/MC/MCTargetOptions.h"
+#include "llvm/MC/MCContext.h"
 #include "llvm/Support/DataTypes.h"
 #include <memory>
 
 namespace llvm {
 
+class MCAsmBackend;
+class MCCodeEmitter;
+class MCContext;
+class MCInstrInfo;
+class MCObjectTargetWriter;
+class MCRegisterInfo;
+class MCSubtargetInfo;
+class MCTargetOptions;
+class StringRef;
 class Target;
+class Triple;
+class raw_ostream;
+class raw_pwrite_stream;
 
 Target &getTheDigitalTarget();
 
-MCCodeEmitter *createDigitalMCCodeEmitter(const MCInstrInfo &MCII,
-                                        const MCRegisterInfo &MRI,
-                                        MCContext &Ctx);
+MCCodeEmitter *createDigitalMCCodeEmitter(const MCInstrInfo &MCII, const MCRegisterInfo &MRI, MCContext &Ctx);
 
-MCAsmBackend *createDigitalAsmBackend(const Target &T, const MCSubtargetInfo &STI,
-                                    const MCRegisterInfo &MRI,
-                                    const MCTargetOptions &Options);
+MCAsmBackend *createDigitalAsmBackend(const Target &T, const MCSubtargetInfo &STI, const MCRegisterInfo &MRI, const MCTargetOptions &Options);
 
-std::unique_ptr<MCObjectWriter> createDigitalELFObjectWriter(raw_pwrite_stream &OS, uint8_t OSABI, bool Is64Bit);
+std::unique_ptr<MCObjectTargetWriter> createDigitalELFObjectWriter(uint8_t OSABI);
 
-} // End llvm namespace
+} // namespace llvm
 
 // Defines symbolic names for Digital registers.  This defines a mapping from
 // register name to register number.

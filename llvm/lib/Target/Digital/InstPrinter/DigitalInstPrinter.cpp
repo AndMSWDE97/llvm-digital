@@ -27,31 +27,31 @@ using namespace llvm;
 #define PRINT_ALIAS_INSTR
 //#include "DigitalGenAsmWriter.inc"
 
-void DigitalInstPrinter::printInst(const MCInst *MI, raw_ostream &O, StringRef Annot) {
+void DigitalInstPrinter::printInst(const MCInst *MI, raw_ostream &O, StringRef Annot, const MCSubtargetInfo &STI) {
     
     printInstruction(MI, O);
     printAnnotation(O, Annot);
 }
 
-+void DigitalInstPrinter::printRegName(raw_ostream &O, unsigned RegNo) const {
-+  O << getRegisterName(RegNo);
-+}
-+
-+void DigitalInstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
-+                                    raw_ostream &O, const char *Modifier) {
-+  assert((Modifier == 0 || Modifier[0] == 0) && "No modifiers supported");
-+  const MCOperand &MO = MI->getOperand(OpNo);
-+
-+  if (MO.isReg()) {
-+    printRegName(O, MO.getReg());
-+    return;
-+  }
-+
-+  if (MO.isImm()) {
-+    O << MO.getImm();
-+    return;
-+  }
-+
-+  assert(MO.isExpr() && "Unknown operand kind in printOperand");
-+  MO.getExpr()->print(O, &MAI);
-+}
+void DigitalInstPrinter::printRegName(raw_ostream &O, unsigned RegNo) const {
+  O << getRegisterName(RegNo);
+}
+
+void DigitalInstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
+                                    raw_ostream &O, const char *Modifier) {
+  assert((Modifier == 0 || Modifier[0] == 0) && "No modifiers supported");
+  const MCOperand &MO = MI->getOperand(OpNo);
+
+  if (MO.isReg()) {
+    printRegName(O, MO.getReg());
+    return;
+  }
+
+  if (MO.isImm()) {
+    O << MO.getImm();
+    return;
+  }
+
+  assert(MO.isExpr() && "Unknown operand kind in printOperand");
+  MO.getExpr()->print(O, &MAI);
+}

@@ -35,7 +35,7 @@ static MCInstrInfo *createDigitalMCInstrInfo() {
 
 static MCAsmInfo *createDigitalMCAsmInfo(const MCRegisterInfo &MRI,
                                       const Triple &TT) {
-  MCAsmInfo *MAI = new DigitalELFMCAsmInfo(TT);
+  MCAsmInfo *MAI = new DigitalMCAsmInfo(TT);
 
   unsigned SP = MRI.getDwarfRegNum(Digital::SP, true);
   MCCFIInstruction Inst = MCCFIInstruction::createDefCfa(nullptr, SP, 0);
@@ -44,7 +44,7 @@ static MCAsmInfo *createDigitalMCAsmInfo(const MCRegisterInfo &MRI,
   return MAI;
 }
 
-static MCRegisterInfo *createDigitalMCRegisterInfo(StringRef TT) {
+static MCRegisterInfo *createDigitalMCRegisterInfo(const Triple &TT) {
   MCRegisterInfo *X = new MCRegisterInfo();
   InitDigitalMCRegisterInfo(X, Digital::R8);
   return X;
@@ -63,7 +63,7 @@ extern "C" void LLVMInitializeDigitalTargetMC() {
   
   RegisterMCAsmInfoFn X(getTheDigitalTarget(), createDigitalMCAsmInfo);
 
-	TargetRegistry::RegisterMCInstrInfo(getTheDigitalTarget(), createDigitalMCInstrInfo);
+  TargetRegistry::RegisterMCInstrInfo(getTheDigitalTarget(), createDigitalMCInstrInfo);
   TargetRegistry::RegisterMCAsmInfo(getTheDigitalTarget(), createDigitalMCAsmInfo);
   TargetRegistry::RegisterMCRegInfo(getTheDigitalTarget(), createDigitalMCRegisterInfo);
   TargetRegistry::RegisterMCAsmBackend(getTheDigitalTarget(), createDigitalAsmBackend);

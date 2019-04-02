@@ -56,6 +56,13 @@ void DigitalMCCodeEmitter::encodeInstruction(const MCInst &MI, raw_ostream &OS, 
 	EmitInstruction(Binary, Size, STI, OS);
 }
 
+void DigitalMCCodeEmitter::EmitInstruction(uint64_t Val, unsigned Size,
+                                        const MCSubtargetInfo &STI,
+                                        raw_ostream &OS) const {
+	
+	return;
+}
+
 unsigned DigitalMCCodeEmitter::getMachineOpValue(const MCInst &MI, const MCOperand &MO, SmallVectorImpl<MCFixup> &Fixups, const MCSubtargetInfo &STI) const {
 
   if (MO.isReg())

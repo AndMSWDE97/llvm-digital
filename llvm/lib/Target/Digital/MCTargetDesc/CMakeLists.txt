@@ -4,6 +4,7 @@ add_llvm_library(LLVMDigitalDesc
   DigitalMCAsmInfo.cpp
   DigitalELFObjectWriter.cpp
   DigitalMCCodeEmitter.cpp
+  DigitalAsmBackend.cpp
   )
 
   add_dependencies(LLVMDigitalDesc DigitalCommonTableGen)
