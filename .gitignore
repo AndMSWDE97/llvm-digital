@@ -7,3 +7,4 @@ build/*
 !build/create_build_files_msvc.cmd
 !build/create_build_files_linux.sh
 !build/README.md
+*,ll
