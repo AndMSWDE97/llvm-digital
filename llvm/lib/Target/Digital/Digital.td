@@ -45,7 +45,15 @@ def DigitalAsmWriter : AsmWriter {
 }
 
 def DigitalAsmParser : AsmParser {
-  let ShouldEmitMatchRegisterAltName = 1;
+  let ShouldEmitMatchRegisterName = 0;
+}
+
+
+def DigitalAsmParserVariant : AsmParserVariant {
+  int Variant = 0;
+
+  // Recognize hard coded registers.
+  string RegisterPrefix = "";
 }
 
 //===---------------------------------------------------------------------===//
@@ -56,4 +64,5 @@ def Digital : Target {
   let InstructionSet         = DigitalInstrInfo;
   let AssemblyWriters        = [DigitalAsmWriter];
   let AssemblyParsers        = [DigitalAsmParser];
+  let AssemblyParserVariants = [DigitalAsmParserVariant];
 }

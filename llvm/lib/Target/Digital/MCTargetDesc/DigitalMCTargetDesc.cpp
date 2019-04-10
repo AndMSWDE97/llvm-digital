@@ -68,4 +68,5 @@ extern "C" void LLVMInitializeDigitalTargetMC() {
   TargetRegistry::RegisterMCRegInfo(getTheDigitalTarget(), createDigitalMCRegisterInfo);
   TargetRegistry::RegisterMCAsmBackend(getTheDigitalTarget(), createDigitalAsmBackend);
   TargetRegistry::RegisterMCCodeEmitter(getTheDigitalTarget(), createDigitalMCCodeEmitter);
+  TargetRegistry::RegisterMCInstPrinter(getTheDigitalTarget(), createDigitalMCInstPrinter);
 }

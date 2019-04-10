@@ -265,7 +265,7 @@ bool DigitalAsmParser::ParseRegister(unsigned &RegNo, SMLoc &StartLoc,
 OperandMatchResultTy DigitalAsmParser::parseRegister(OperandVector &Operands) {
   SMLoc S = getLoc();
   SMLoc E = SMLoc::getFromPointer(S.getPointer() - 1);
-
+  /*
   switch (getLexer().getKind()) {
   default:
     return MatchOperand_NoMatch;
@@ -277,7 +277,7 @@ OperandMatchResultTy DigitalAsmParser::parseRegister(OperandVector &Operands) {
     }
     getLexer().Lex();
     Operands.push_back(DigitalOperand::createReg(RegNo, S, E));
-  }
+  }*/
   return MatchOperand_Success;
 }
 

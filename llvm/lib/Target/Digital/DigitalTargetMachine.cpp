@@ -38,7 +38,7 @@ DigitalTargetMachine::DigitalTargetMachine( const Target &T, const Triple &TT,
                                        Optional<Reloc::Model> RM,
                                        Optional<CodeModel::Model> CodeModel,
                                        CodeGenOpt::Level OptLevel, bool JIT)
-    : LLVMTargetMachine(T, "E-m:m-p:16:16-i16:16-n16-S16", TT, CPU, FeatureString,
+    : LLVMTargetMachine(T, "E-m:e-p:16:16-i16:16-n16-S16", TT, CPU, FeatureString,
                         Options, getEffectiveRelocModel(RM),
                         getEffectiveCodeModel(CodeModel, CodeModel::Small), OptLevel),
       TLOF(make_unique<DigitalTargetObjectFile>()) {
