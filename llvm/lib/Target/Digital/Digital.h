@@ -25,6 +25,8 @@ namespace llvm {
   class MCInst;
   class MachineInstr;
 
+  FunctionPass *createDigitalISelDag(DigitalTargetMachine &TM);
+
 } // end namespace llvm;
 
 #endif

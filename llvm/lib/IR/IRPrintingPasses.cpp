@@ -66,6 +66,8 @@ public:
       : ModulePass(ID), P(OS, Banner, ShouldPreserveUseListOrder) {}
 
   bool runOnModule(Module &M) override {
+
+	errs() << "In  bool runOnModule(Module &M) inside IRPrintingPasses.cpp\n";
     ModuleAnalysisManager DummyMAM;
     P.run(M, DummyMAM);
     return false;

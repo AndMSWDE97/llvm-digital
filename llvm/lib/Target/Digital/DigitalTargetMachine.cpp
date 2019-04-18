@@ -41,7 +41,8 @@ DigitalTargetMachine::DigitalTargetMachine( const Target &T, const Triple &TT,
     : LLVMTargetMachine(T, "E-m:e-p:16:16-i16:16-n16-S16", TT, CPU, FeatureString,
                         Options, getEffectiveRelocModel(RM),
                         getEffectiveCodeModel(CodeModel, CodeModel::Small), OptLevel),
-      TLOF(make_unique<DigitalTargetObjectFile>()) {
+      TLOF(make_unique<DigitalTargetObjectFile>()),
+      Subtarget(TT, CPU, FeatureString) {
   initAsmInfo();
 }
 
@@ -58,9 +59,16 @@ public:
   DigitalTargetMachine &getDigitalTargetMachine() const {
     return getTM<DigitalTargetMachine>();
   }
+
+  virtual bool addInstSelector();
 };
 } // namespace
 
 TargetPassConfig *DigitalTargetMachine::createPassConfig(PassManagerBase &PM) {
   return new DigitalPassConfig(this, PM);
+}
+
+bool DigitalPassConfig::addInstSelector() {
+  addPass(createDigitalISelDag(getDigitalTargetMachine()));
+  return false;
 }

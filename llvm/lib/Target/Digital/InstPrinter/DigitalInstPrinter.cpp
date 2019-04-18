@@ -55,3 +55,10 @@ void DigitalInstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
   assert(MO.isExpr() && "Unknown operand kind in printOperand");
   MO.getExpr()->print(O, &MAI);
 }
+
+void DigitalInstPrinter::printMemOperand(const MCInst *MI, int opNum, raw_ostream &O) {
+
+  O << "[";
+  printOperand(MI, opNum, O);
+  O << "]";
+}

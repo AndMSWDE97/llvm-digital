@@ -40,6 +40,8 @@ namespace {
 
     void printOperand(const MachineInstr *MI, int OpNum,
                       raw_ostream &O, const char* Modifier = 0);
+                      
+    void printMemOperand(const MachineInstr *MI, int opNum, raw_ostream &O);
     void printSrcMemOperand(const MachineInstr *MI, int OpNum,
                             raw_ostream &O);
     bool PrintAsmOperand(const MachineInstr *MI, unsigned OpNo,
@@ -53,8 +55,27 @@ namespace {
 } // end of anonymous namespace
 
 
-void DigitalAsmPrinter::printOperand(const MachineInstr *MI, int OpNum,
-                                    raw_ostream &O, const char *Modifier) {
+void DigitalAsmPrinter::printOperand(const MachineInstr *MI, int OpNum, raw_ostream &O, const char *Modifier) {
+
+  const MachineOperand &MO = MI->getOperand(OpNum);
+  
+  if (MO.isReg()) {
+	//printRegName(O, Op.getReg());
+    O << DigitalInstPrinter::getRegisterName(MO.getReg());
+    return;
+  }
+  
+  if (MO.isImm()) {
+    O << MO.getImm();
+    return;
+  }
+}
+
+void DigitalAsmPrinter::printMemOperand(const MachineInstr *MI, int opNum, raw_ostream &O) {
+
+  O << "[";
+  printOperand(MI, opNum, O);
+  O << "]";
 }
 
 void DigitalAsmPrinter::printSrcMemOperand(const MachineInstr *MI, int OpNum,

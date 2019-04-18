@@ -30,6 +30,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include <string>
+#include "llvm/Support/raw_ostream.h"
 
 namespace llvm {
 
@@ -269,7 +270,9 @@ public:
   ImmutablePass *getAsImmutablePass() override { return this; }
 
   /// ImmutablePasses are never run.
-  bool runOnModule(Module &) override { return false; }
+  bool runOnModule(Module &) override { 
+	  errs() << "In  bool runOnModule(Module &M) inside Pass.h\n";
+	  return false; }
 };
 
 //===----------------------------------------------------------------------===//

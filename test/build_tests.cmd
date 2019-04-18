@@ -5,6 +5,6 @@ REM Test for a simple empty main method
 "../build/Debug/bin/llc" -march=digital -relocation-model=pic -filetype=asm simple_main/test.ll -o simple_main/test.s
 
 REM Test for a simple addition
-"../build/Debug/bin/clang" add/test.c -S -emit-llvm -o add/test.ll
-"../build/Debug/bin/llc" -march=digital -relocation-model=pic -filetype=asm add/test.ll -o add/test.s
+REM "../build/Debug/bin/clang" add/test.c -S -emit-llvm -o add/test.ll
+REM "../build/Debug/bin/llc" -march=digital -relocation-model=pic -filetype=asm add/test.ll -o add/test.s
 cmd /k

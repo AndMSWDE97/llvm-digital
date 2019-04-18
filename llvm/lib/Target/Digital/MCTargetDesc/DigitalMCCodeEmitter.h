@@ -55,6 +55,10 @@ uint64_t getBinaryCodeForInstr(const MCInst &MI,
   unsigned getMachineOpValue(const MCInst &MI, const MCOperand &MO,
                              SmallVectorImpl<MCFixup> &Fixups,
                              const MCSubtargetInfo &STI) const;
+                             
+  unsigned getMemEncoding(const MCInst &MI, unsigned OpNo,
+                          SmallVectorImpl<MCFixup> &Fixups,
+                          const MCSubtargetInfo &STI) const;
 };
 
 } // end namespace llvm

@@ -15,29 +15,11 @@
 
 include "llvm/Target/Target.td"
 
-//===---------------------------------------------------------------------===//
-// Register File Description
-//===---------------------------------------------------------------------===//
-
 include "DigitalRegisterInfo.td"
-
-//===---------------------------------------------------------------------===//
-// Schedule Definitions
-//===---------------------------------------------------------------------===//
-
 include "DigitalSchedule.td"
-
-//===---------------------------------------------------------------------===//
-// Instruction Descriptions
-//===---------------------------------------------------------------------===//
-
 include "DigitalInstrInfo.td"
 
 def DigitalInstrInfo : InstrInfo;
-
-//===---------------------------------------------------------------------===//
-// Assembly Printers
-//===---------------------------------------------------------------------===//
 
 def DigitalAsmWriter : AsmWriter {
  string AsmWriterClassName = "InstPrinter";
@@ -48,13 +30,17 @@ def DigitalAsmParser : AsmParser {
   let ShouldEmitMatchRegisterName = 0;
 }
 
-
 def DigitalAsmParserVariant : AsmParserVariant {
   int Variant = 0;
 
   // Recognize hard coded registers.
   string RegisterPrefix = "";
 }
+
+class Proc<string Name, list<SubtargetFeature> Features>
+ : Processor<Name, NoItineraries, Features>;
+
+def : Proc<"generic",         []>;
 
 //===---------------------------------------------------------------------===//
 // Target Declaration

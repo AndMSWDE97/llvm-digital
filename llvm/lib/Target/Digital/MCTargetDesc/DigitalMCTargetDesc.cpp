@@ -24,6 +24,9 @@ using namespace llvm;
 #define GET_INSTRINFO_MC_DESC
 #include "DigitalGenInstrInfo.inc"
 
+#define GET_SUBTARGETINFO_MC_DESC
+#include "DigitalGenSubtargetInfo.inc"
+
 #define GET_REGINFO_MC_DESC
 #include "DigitalGenRegisterInfo.inc"
 
@@ -59,6 +62,11 @@ static MCInstPrinter *createDigitalMCInstPrinter(const Triple &T,
   return new DigitalInstPrinter(MAI, MII, MRI);
 }
 
+static MCSubtargetInfo *createDigitalMCSubtargetInfo(const Triple &TT, StringRef CPU, StringRef FS) {
+  return createDigitalMCSubtargetInfoImpl(TT, CPU, FS);
+}
+
+
 extern "C" void LLVMInitializeDigitalTargetMC() {
   
   RegisterMCAsmInfoFn X(getTheDigitalTarget(), createDigitalMCAsmInfo);
@@ -69,4 +77,5 @@ extern "C" void LLVMInitializeDigitalTargetMC() {
   TargetRegistry::RegisterMCAsmBackend(getTheDigitalTarget(), createDigitalAsmBackend);
   TargetRegistry::RegisterMCCodeEmitter(getTheDigitalTarget(), createDigitalMCCodeEmitter);
   TargetRegistry::RegisterMCInstPrinter(getTheDigitalTarget(), createDigitalMCInstPrinter);
+  TargetRegistry::RegisterMCSubtargetInfo(getTheDigitalTarget(), createDigitalMCSubtargetInfo);
 }

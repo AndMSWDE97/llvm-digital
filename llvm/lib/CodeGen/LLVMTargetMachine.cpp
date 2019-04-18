@@ -105,8 +105,12 @@ addPassesToGenerateCode(LLVMTargetMachine &TM, PassManagerBase &PM,
   PM.add(PassConfig);
   PM.add(&MMI);
 
-  if (PassConfig->addISelPasses())
+  if (PassConfig->addISelPasses()){
+    errs() << "LLVMTargetMachine::addPassesToGenerateCode -> if(PassConfig->addISelPasses)\n";
     return nullptr;
+  }
+  
+
   PassConfig->addMachinePasses();
   PassConfig->setInitialized();
   return PassConfig;
@@ -117,6 +121,9 @@ bool LLVMTargetMachine::addAsmPrinter(PassManagerBase &PM,
                                       raw_pwrite_stream *DwoOut,
                                       CodeGenFileType FileType,
                                       MCContext &Context) {
+
+	errs() << "In LLVMTargetMachine::addAsmPrinter\n";
+
   if (Options.MCOptions.MCSaveTempLabels)
     Context.setAllowTemporaryLabels(false);
 
@@ -153,7 +160,7 @@ bool LLVMTargetMachine::addAsmPrinter(PassManagerBase &PM,
     MCCodeEmitter *MCE = getTarget().createMCCodeEmitter(MII, MRI, Context);
     MCAsmBackend *MAB =
         getTarget().createMCAsmBackend(STI, MRI, Options.MCOptions);
-    if (!MCE || !MAB)
+    if (!MCE || !MAB) 
       return true;
 
     // Don't waste memory on names of temp labels.
@@ -192,20 +199,36 @@ bool LLVMTargetMachine::addPassesToEmitFile(PassManagerBase &PM,
                                             CodeGenFileType FileType,
                                             bool DisableVerify,
                                             MachineModuleInfo *MMI) {
+  errs() << "LLVMTargetMachine::addPassesToEmitFile\n";
+
   // Add common CodeGen passes.
-  if (!MMI)
-    MMI = new MachineModuleInfo(this);
-  TargetPassConfig *PassConfig =
-      addPassesToGenerateCode(*this, PM, DisableVerify, *MMI);
-  if (!PassConfig)
+  if (!MMI) {
+    errs() << "if(!MMI)\n";
+	  MMI = new MachineModuleInfo(this);
+  }
+    
+  errs() << "Before addPassesToGenerateCode\n";
+  TargetPassConfig *PassConfig = addPassesToGenerateCode(*this, PM, DisableVerify, *MMI);
+  errs() << "After addPassesToGenerateCode\n";
+
+  if (!PassConfig) {
+    errs() << "LLVMTargetMachine::addPassesToEmitFile -> if(!PassConfig)\n";
     return true;
+  }
+    
+  errs() << "After if(!PassConfig)\n";
 
   if (!TargetPassConfig::willCompleteCodeGenPipeline()) {
+    errs() << "In if(!TargetPassConfig::willCompleteCodeGenPipeline())\n";
     PM.add(createPrintMIRPass(Out));
-  } else if (addAsmPrinter(PM, Out, DwoOut, FileType, MMI->getContext()))
+  } else if (addAsmPrinter(PM, Out, DwoOut, FileType, MMI->getContext())) {
+    errs() << "LLVMTargetMachine::addPassesToEmitFile -> if(addAsmPrinter(...))\n";
     return true;
+  }
+    
 
   PM.add(createFreeMachineFunctionPass());
+  errs() << "LLVMTargetMachine::addPassesToEmitFile -> return false\n";
   return false;
 }
 

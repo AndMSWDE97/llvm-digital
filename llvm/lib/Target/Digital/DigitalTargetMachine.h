@@ -16,17 +16,15 @@
 
 #include "llvm/Target/TargetMachine.h"
 #include "DigitalTargetMachine.h"
+#include "DigitalSubtarget.h"
 #include "MCTargetDesc/DigitalMCTargetDesc.h"
 
 namespace llvm {
 
 class DigitalTargetMachine : public LLVMTargetMachine {
   std::unique_ptr<TargetLoweringObjectFile> TLOF;
-  // Selected ABI
-  //DigitalABIInfo ABI;
- // DigitalSubtarget DefaultSubtarget;
-
-  //mutable StringMap<std::unique_ptr<DigitalSubtarget>> SubtargetMap;
+	DigitalSubtarget Subtarget;
+  
 public:
   DigitalTargetMachine(const Target &T, const Triple &TT, StringRef CPU,
                      StringRef FeatureString, const TargetOptions &Options,
@@ -34,12 +32,10 @@ public:
                      Optional<CodeModel::Model> CodeModel,
                      CodeGenOpt::Level OptLevel, bool JIT);
   ~DigitalTargetMachine() override;
-  /*
+  
   const DigitalSubtarget *getSubtargetImpl() const {
-    return &DefaultSubtarget;
-  }*/
-
-  //const DigitalSubtarget *getSubtargetImpl(const Function &F) const override;
+    return &Subtarget;
+  }
 
   // Pass Pipeline Configuration
   TargetPassConfig *createPassConfig(PassManagerBase &PM) override;

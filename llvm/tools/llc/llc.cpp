@@ -536,9 +536,14 @@ static int compileModule(char **argv, LLVMContext &Context) {
     LLVMTargetMachine &LLVMTM = static_cast<LLVMTargetMachine&>(*Target);
     MachineModuleInfo *MMI = new MachineModuleInfo(&LLVMTM);
 
+	errs() << "begin\n";
+
     // Construct a custom pass pipeline that starts after instruction
     // selection.
     if (!RunPassNames->empty()) {
+
+		errs() << "before first if\n";
+
       if (!MIR) {
         WithColor::warning(errs(), argv[0])
             << "run-pass is for .mir file only.\n";
@@ -566,6 +571,8 @@ static int compileModule(char **argv, LLVMContext &Context) {
     } else if (Target->addPassesToEmitFile(PM, *OS,
                                            DwoOut ? &DwoOut->os() : nullptr,
                                            FileType, NoVerify, MMI)) {
+
+		errs() << "In else if part\n";
       WithColor::warning(errs(), argv[0])
           << "target does not support generation of this"
           << " file type!\n";
@@ -578,8 +585,12 @@ static int compileModule(char **argv, LLVMContext &Context) {
         return 1;
     }
 
+	errs() << "done\n";
+
     // Before executing passes, print the final values of the LLVM options.
     cl::PrintOptionValues();
+
+	errs() << "After cl::PrintOptionValues()\n";
 
     // If requested, run the pass manager over the same module again,
     // to catch any bugs due to persistent state in the passes. Note that
@@ -587,18 +598,25 @@ static int compileModule(char **argv, LLVMContext &Context) {
     // in the future.
     SmallVector<char, 0> CompileTwiceBuffer;
     if (CompileTwice) {
+      errs() << "In if(CompileTwice)\n";
       std::unique_ptr<Module> M2(llvm::CloneModule(*M));
       PM.run(*M2);
       CompileTwiceBuffer = Buffer;
       Buffer.clear();
     }
 
+	errs() << "After SmallVector<char, 0> CompileTwiceBuffer;\n";
+
     PM.run(*M);
+
+	errs() << "After  PM.run(*M);\n";
 
     auto HasError =
         ((const LLCDiagnosticHandler *)(Context.getDiagHandlerPtr()))->HasError;
     if (*HasError)
       return 1;
+
+	errs() << "After  HasError stuff\n";
 
     // Compare the two outputs and make sure they're the same
     if (CompileTwice) {
@@ -615,6 +633,8 @@ static int compileModule(char **argv, LLVMContext &Context) {
         return 1;
       }
     }
+
+	errs() << "After  if (CompileTwice) 2nd time\n";
 
     if (BOS) {
       Out->os() << Buffer;

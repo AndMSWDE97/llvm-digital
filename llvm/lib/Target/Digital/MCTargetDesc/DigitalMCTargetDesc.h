@@ -54,6 +54,9 @@ std::unique_ptr<MCObjectTargetWriter> createDigitalELFObjectWriter(uint8_t OSABI
 #define GET_REGINFO_ENUM
 #include "DigitalGenRegisterInfo.inc"
 
+#define GET_SUBTARGETINFO_ENUM
+#include "DigitalGenSubtargetInfo.inc"
+
 // Defines symbolic names for the Digital instructions.
 #define GET_INSTRINFO_ENUM
 #include "DigitalGenInstrInfo.inc"

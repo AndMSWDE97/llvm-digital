@@ -171,6 +171,11 @@ def AND     : ArithLogic<0x6, "AND", and, IIAlu, CPURegs, 1>;
 def OR      : ArithLogic<0x7, "OR",  or,  IIAlu, CPURegs, 1>;
 def EOR     : ArithLogic<0x8, "EOR", xor, IIAlu, CPURegs, 1>;
 
+def ST      : TwoRegs<0x26, (outs), (ins CPURegs:$rs, mem:$rd), "ST $rd, $rs", 
+                [(store i16:$rs, addr:$rd)], IIStore>;
+
+
+
 /// Load and Store Instructions
 ///  aligned
 // defm LD     : LoadM32<0x27,  "ld",  load_a>;
@@ -184,7 +189,7 @@ def EOR     : ArithLogic<0x8, "EOR", xor, IIAlu, CPURegs, 1>;
 
 /// Shift Instructions
 
-def JMP      : JumpFR<0x36, "jmp", CPURegs>;
+def JMP      : JumpFR<0x36, "JMP", CPURegs>;
 
 def RRET     : RetBase<CPURegs>;
 

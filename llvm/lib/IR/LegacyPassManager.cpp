@@ -1708,39 +1708,68 @@ bool
 MPPassManager::runOnModule(Module &M) {
   bool Changed = false;
 
+  errs() << "In MPPassManager::runOnModule(Module &M)\n";
+
   // Initialize on-the-fly passes
   for (auto &OnTheFlyManager : OnTheFlyManagers) {
     FunctionPassManagerImpl *FPP = OnTheFlyManager.second;
     Changed |= FPP->doInitialization(M);
   }
 
+  errs() << "After for (auto &OnTheFlyManager : OnTheFlyManagers)\n";
+
   // Initialize module passes
   for (unsigned Index = 0; Index < getNumContainedPasses(); ++Index)
     Changed |= getContainedPass(Index)->doInitialization(M);
 
+  errs() << "After for (unsigned Index = 0; Index < getNumContainedPasses(); ++Index)\n";
+
   unsigned InstrCount, ModuleCount = 0;
   StringMap<std::pair<unsigned, unsigned>> FunctionToInstrCount;
   bool EmitICRemark = M.shouldEmitInstrCountChangedRemark();
+
+  errs() << "After M.shouldEmitInstrCountChangedRemark()\n";
+
   // Collect the initial size of the module.
   if (EmitICRemark) {
     InstrCount = initSizeRemarkInfo(M, FunctionToInstrCount);
     ModuleCount = InstrCount;
   }
 
+ errs() << "After  if (EmitICRemark)\n";
+
   for (unsigned Index = 0; Index < getNumContainedPasses(); ++Index) {
+
+	errs() << "Inside for (unsigned Index = 0; Index < getNumContainedPasses(); ++Index)\n";
+
     ModulePass *MP = getContainedPass(Index);
     bool LocalChanged = false;
 
+	errs() << "After ModulePass *MP = getContainedPass(Index);\n";
+
     dumpPassInfo(MP, EXECUTION_MSG, ON_MODULE_MSG, M.getModuleIdentifier());
+    
+	errs() << "After dumpPassInfo(MP, EXECUTION_MSG, ON_MODULE_MSG, M.getModuleIdentifier());\n";
+
     dumpRequiredSet(MP);
+
+	errs() << "After dumpRequiredSet(MP);\n";
 
     initializeAnalysisImpl(MP);
 
+	errs() << "After initializeAnalysisImpl(MP);\n";
+
     {
+      errs() << "Inside big codeblock after initializeAnalysisImpl(MP);\n";
       PassManagerPrettyStackEntry X(MP, M);
       TimeRegion PassTimer(getPassTimer(MP));
 
+	  errs() << "After TimeRegion PassTimer(getPassTimer(MP));\n";
+
       LocalChanged |= MP->runOnModule(M);
+
+	  errs() << "After LocalChanged |= MP->runOnModule(M);\n";
+
       if (EmitICRemark) {
         // Update the size of the module.
         ModuleCount = M.getInstructionCount();
@@ -1753,6 +1782,8 @@ MPPassManager::runOnModule(Module &M) {
         }
       }
     }
+
+	errs() << "After big codeblock PassManagerPrettyStackEntry X(MP, M);\n";
 
     Changed |= LocalChanged;
     if (LocalChanged)
@@ -1767,6 +1798,8 @@ MPPassManager::runOnModule(Module &M) {
     removeDeadPasses(MP, M.getModuleIdentifier(), ON_MODULE_MSG);
   }
 
+  errs() << "After for (unsigned Index = 0; Index < getNumContainedPasses(); ++Index)\n";
+
   // Finalize module passes
   for (int Index = getNumContainedPasses() - 1; Index >= 0; --Index)
     Changed |= getContainedPass(Index)->doFinalization(M);
@@ -1780,6 +1813,7 @@ MPPassManager::runOnModule(Module &M) {
     Changed |= FPP->doFinalization(M);
   }
 
+  errs() << "Before return in MPPassManager::runOnModule(Module &M)\n";
   return Changed;
 }
 
@@ -1843,23 +1877,38 @@ Pass* MPPassManager::getOnTheFlyPass(Pass *MP, AnalysisID PI, Function &F){
 /// run - Execute all of the passes scheduled for execution.  Keep track of
 /// whether any of the passes modifies the module, and if so, return true.
 bool PassManagerImpl::run(Module &M) {
+
+  errs() << "In  PassManagerImpl::run\n";
+
   bool Changed = false;
 
   dumpArguments();
+  errs() << "After dumpArguments()\n";
   dumpPasses();
+  errs() << "After dumpPasses()\n";
 
   for (ImmutablePass *ImPass : getImmutablePasses())
     Changed |= ImPass->doInitialization(M);
 
+  errs() << "After  for (ImmutablePass *ImPass : getImmutablePasses())\n";
+
   initializeAllAnalysisInfo();
+  errs() << "After  initializeAllAnalysisInfo()\n";
   for (unsigned Index = 0; Index < getNumContainedManagers(); ++Index) {
+	
+	errs() << "Inside for loop\n";
     Changed |= getContainedManager(Index)->runOnModule(M);
+    errs() << "After Changed |= getContainedManager(Index)->runOnModule(M)\n";
     M.getContext().yield();
+    errs() << "After  M.getContext().yield()\n";
   }
+
+  errs() << "After  for (unsigned Index = 0; Index < getNumContainedManagers(); ++Index)\n";
 
   for (ImmutablePass *ImPass : getImmutablePasses())
     Changed |= ImPass->doFinalization(M);
 
+  errs() << "Before return in  PassManagerImpl::run\n";
   return Changed;
 }
 
