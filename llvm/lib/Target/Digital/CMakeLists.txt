@@ -7,6 +7,7 @@ tablegen(LLVM DigitalGenMCCodeEmitter.inc -gen-emitter)
 tablegen(LLVM DigitalGenMCPseudoLowering.inc -gen-pseudo-lowering)
 tablegen(LLVM DigitalGenAsmMatcher.inc -gen-asm-matcher)
 tablegen(LLVM DigitalGenAsmWriter.inc -gen-asm-writer)
+tablegen(LLVM DigitalGenCallingConv.inc -gen-callingconv)
 tablegen(LLVM DigitalGenDAGISel.inc -gen-dag-isel)
 tablegen(LLVM DigitalGenSubtargetInfo.inc -gen-subtarget)
 
@@ -19,6 +20,9 @@ add_llvm_target(DigitalCodeGen
   DigitalMachineFunction.cpp
   DigitalISelDAGToDAG.cpp
   DigitalSubtarget.cpp
+  DigitalFrameLowering.cpp
+  DigitalInstrInfo.cpp
+  DigitalRegisterInfo.cpp
   )
 
 add_subdirectory(TargetInfo)

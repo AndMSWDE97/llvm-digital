@@ -275,6 +275,8 @@ static void InlineAsmDiagHandler(const SMDiagnostic &SMD, void *Context,
 int main(int argc, char **argv) {
   InitLLVM X(argc, argv);
 
+  errs() << "begin\n";
+
   // Enable debug stream buffering.
   EnableDebugBuffering = true;
 
@@ -390,6 +392,8 @@ static int compileModule(char **argv, LLVMContext &Context) {
   std::unique_ptr<MIRParser> MIR;
   Triple TheTriple;
 
+  errs() << "In static int compileModule(char **argv, LLVMContext &Context)\n";
+
   bool SkipModule = MCPU == "help" ||
                     (!MAttrs.empty() && MAttrs.front() == "help");
 
@@ -418,6 +422,8 @@ static int compileModule(char **argv, LLVMContext &Context) {
   if (TheTriple.getTriple().empty())
     TheTriple.setTriple(sys::getDefaultTargetTriple());
 
+  errs() << "After if (TheTriple.getTriple().empty())\n";
+
   // Get the target specific parser.
   std::string Error;
   const Target *TheTarget = TargetRegistry::lookupTarget(MArch, TheTriple,
@@ -426,6 +432,8 @@ static int compileModule(char **argv, LLVMContext &Context) {
     WithColor::error(errs(), argv[0]) << Error;
     return 1;
   }
+
+  errs() << "After if (!TheTarget)\n";
 
   std::string CPUStr = getCPUStr(), FeaturesStr = getFeaturesStr();
 
@@ -441,6 +449,8 @@ static int compileModule(char **argv, LLVMContext &Context) {
   case '3': OLvl = CodeGenOpt::Aggressive; break;
   }
 
+  errs() << "After CodeGenOpt::Level OLvl = CodeGenOpt::Default;\n";
+
   TargetOptions Options = InitTargetOptionsFromCodeGenFlags();
   Options.DisableIntegratedAS = NoIntegratedAssembler;
   Options.MCOptions.ShowMCEncoding = ShowMCEncoding;
@@ -450,9 +460,14 @@ static int compileModule(char **argv, LLVMContext &Context) {
   Options.MCOptions.IASSearchPaths = IncludeDirs;
   Options.MCOptions.SplitDwarfFile = SplitDwarfFile;
 
+  errs() << "After TargetOptions Options = InitTargetOptionsFromCodeGenFlags();\n";
+  errs() << TheTarget->getName() << ":" << TheTarget->getBackendName() << "\n";
+
   std::unique_ptr<TargetMachine> Target(TheTarget->createTargetMachine(
       TheTriple.getTriple(), CPUStr, FeaturesStr, Options, getRelocModel(),
       getCodeModel(), OLvl));
+
+  errs() << "After  std::unique_ptr<TargetMachine> Target(TheTarget->createTargetMachine\n";
 
   assert(Target && "Could not allocate target machine!");
 
@@ -500,6 +515,8 @@ static int compileModule(char **argv, LLVMContext &Context) {
   // to check debug info whereas verifier relies on correct datalayout.
   UpgradeDebugInfo(*M);
 
+  errs() << "After UpgradeDebugInfo(*M);\n";
+
   // Verify module immediately to catch problems before doInitialization() is
   // called on any passes.
   if (!NoVerify && verifyModule(*M, &errs())) {
@@ -508,6 +525,8 @@ static int compileModule(char **argv, LLVMContext &Context) {
     WithColor::error(errs(), Prefix) << "input module is broken!\n";
     return 1;
   }
+
+  errs() << "After if (!NoVerify && verifyModule(*M, &errs()))\n";
 
   // Override function attributes based on CPUStr, FeaturesStr, and command line
   // flags.
@@ -532,11 +551,13 @@ static int compileModule(char **argv, LLVMContext &Context) {
       OS = BOS.get();
     }
 
+	errs() << "After if (RelaxAll.getNumOccurrences() > 0 && FileType != TargetMachine::CGFT_ObjectFile)\n";
+
     const char *argv0 = argv[0];
     LLVMTargetMachine &LLVMTM = static_cast<LLVMTargetMachine&>(*Target);
     MachineModuleInfo *MMI = new MachineModuleInfo(&LLVMTM);
 
-	errs() << "begin\n";
+	errs() << "begin RunPassNames\n";
 
     // Construct a custom pass pipeline that starts after instruction
     // selection.

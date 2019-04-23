@@ -91,6 +91,7 @@ public:
 
   // This pass just prints a banner followed by the function as it's processed.
   bool runOnFunction(Function &F) override {
+    errs() << "In bool runOnFunction(Function &F) override IRPrintinPasses.cpp\n";
     FunctionAnalysisManager DummyFAM;
     P.run(F, DummyFAM);
     return false;

@@ -18,6 +18,7 @@ include "llvm/Target/Target.td"
 include "DigitalRegisterInfo.td"
 include "DigitalSchedule.td"
 include "DigitalInstrInfo.td"
+include "DigitalCallingConv.td"
 
 def DigitalInstrInfo : InstrInfo;
 

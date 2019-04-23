@@ -25,12 +25,17 @@ using namespace llvm;
 
 void DigitalSubtarget::anchor() { }
 
-DigitalSubtarget::DigitalSubtarget(const Triple &TT, const std::string &CPU,
-                                   const std::string &FS)
-    :
-  DigitalGenSubtargetInfo(TT, CPU, FS) {
-  std::string CPUName = "generic";
+DigitalSubtarget &DigitalSubtarget::initializeSubtargetDependencies(StringRef CPU, StringRef FS) {
 
-  // Parse features string.
+  StringRef CPUName = "generic";
   ParseSubtargetFeatures(CPUName, FS);
+
+  return *this;
 }
+
+DigitalSubtarget::DigitalSubtarget(const Triple &TT, const std::string &CPU,
+                                   const std::string &FS, const TargetMachine &TM)
+    : DigitalGenSubtargetInfo(TT, CPU, FS),
+      FrameLowering(initializeSubtargetDependencies(CPU, FS)), 
+      InstrInfo(initializeSubtargetDependencies(CPU, FS)), 
+	  RegInfo(getHwMode()) {}

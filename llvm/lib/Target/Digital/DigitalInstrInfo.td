@@ -15,11 +15,11 @@
 // Digital profiles and nodes
 //===----------------------------------------------------------------------===//
 
-def SDT_DigitalRet          : SDTypeProfile<0, 1, [SDTCisInt<0>]>;
+//def SDT_DigitalRet          : SDTypeProfile<0, 1, [SDTCisInt<0>]>;
 
 // Return
-def DigitalRet : SDNode<"DigitalISD::Ret", SDTNone,
-                     [SDNPHasChain, SDNPOptInGlue, SDNPVariadic]>;
+//def DigitalRet : SDNode<"DigitalISD::Ret", SDTNone,
+//                     [SDNPHasChain, SDNPOptInGlue, SDNPVariadic]>;
 
 //===----------------------------------------------------------------------===//
 // Instruction format superclass

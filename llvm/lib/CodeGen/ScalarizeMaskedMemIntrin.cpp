@@ -540,6 +540,7 @@ static void scalarizeMaskedScatter(CallInst *CI) {
 }
 
 bool ScalarizeMaskedMemIntrin::runOnFunction(Function &F) {
+
   bool EverMadeChange = false;
 
   TTI = &getAnalysis<TargetTransformInfoWrapperPass>().getTTI(F);

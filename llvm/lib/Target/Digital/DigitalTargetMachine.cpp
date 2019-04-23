@@ -42,7 +42,7 @@ DigitalTargetMachine::DigitalTargetMachine( const Target &T, const Triple &TT,
                         Options, getEffectiveRelocModel(RM),
                         getEffectiveCodeModel(CodeModel, CodeModel::Small), OptLevel),
       TLOF(make_unique<DigitalTargetObjectFile>()),
-      Subtarget(TT, CPU, FeatureString) {
+      Subtarget(TT, CPU, FeatureString, *this) {
   initAsmInfo();
 }
 

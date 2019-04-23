@@ -80,6 +80,7 @@ LLVMTargetMachine::LLVMTargetMachine(const Target &T,
                                      Reloc::Model RM, CodeModel::Model CM,
                                      CodeGenOpt::Level OL)
     : TargetMachine(T, DataLayoutString, TT, CPU, FS, Options) {
+      
   this->RM = RM;
   this->CMModel = CM;
   this->OptLevel = OL;
@@ -106,7 +107,6 @@ addPassesToGenerateCode(LLVMTargetMachine &TM, PassManagerBase &PM,
   PM.add(&MMI);
 
   if (PassConfig->addISelPasses()){
-    errs() << "LLVMTargetMachine::addPassesToGenerateCode -> if(PassConfig->addISelPasses)\n";
     return nullptr;
   }
   
@@ -121,8 +121,6 @@ bool LLVMTargetMachine::addAsmPrinter(PassManagerBase &PM,
                                       raw_pwrite_stream *DwoOut,
                                       CodeGenFileType FileType,
                                       MCContext &Context) {
-
-	errs() << "In LLVMTargetMachine::addAsmPrinter\n";
 
   if (Options.MCOptions.MCSaveTempLabels)
     Context.setAllowTemporaryLabels(false);
