@@ -1214,6 +1214,7 @@ TargetTransformInfoWrapperPass::TargetTransformInfoWrapperPass(
 
 TargetTransformInfo &TargetTransformInfoWrapperPass::getTTI(const Function &F) {
   errs() << "In TargetTransformInfo &TargetTransformInfoWrapperPass::getTTI(const Function &F)\n";
+  errs() << F.getName() << " : " << "\n";
   FunctionAnalysisManager DummyFAM;
   TTI = TIRA.run(F, DummyFAM);
   errs() << "After TTI = TIRA.run(F, DummyFAM);\n";

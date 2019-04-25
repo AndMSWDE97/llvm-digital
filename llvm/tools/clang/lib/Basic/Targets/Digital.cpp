@@ -11,56 +11,31 @@
 //===----------------------------------------------------------------------===//
 
 #include "Digital.h"
+#include "Targets.h"
+#include "clang/Basic/Diagnostic.h"
 #include "clang/Basic/MacroBuilder.h"
+#include "clang/Basic/TargetBuiltins.h"
 #include "llvm/ADT/StringSwitch.h"
 
 using namespace clang;
 using namespace clang::targets;
 
-const char *const DigitalTargetInfo::GCCRegNames[] = {
-    "r0",  "r1",  "r2",  "r3",  "r4",  "r5",  "r6",  "r7",  "r8",  "r9",  "r10",
-    "r11", "r12"
-};
-
 ArrayRef<const char *> DigitalTargetInfo::getGCCRegNames() const {
-  return llvm::makeArrayRef(GCCRegNames);
+  return llvm::makeArrayRef({"R0", "R1", "R2", "R3", "R4", "R5", "R6", "R7",
+                             "R8", "R9", "R10", "R11", "R12"});
 }
 
-const TargetInfo::GCCRegAlias DigitalTargetInfo::GCCRegAliases[] = {
-    {{"bp"}, "r10"},   {{"sp"}, "r11"},   {{"ra"}, "r12"},
-};
-
 ArrayRef<TargetInfo::GCCRegAlias> DigitalTargetInfo::getGCCRegAliases() const {
+
+	const TargetInfo::GCCRegAlias GCCRegAliases[] = {
+      {{"BP"}, "R10"},
+      {{"SP"}, "R11"},
+      {{"RA"}, "R12"},
+  };
+
   return llvm::makeArrayRef(GCCRegAliases);
 }
 
-bool DigitalTargetInfo::isValidCPUName(StringRef Name) const {
-  return llvm::StringSwitch<bool>(Name).Case("v11", true).Default(false);
-}
-void DigitalTargetInfo::fillValidCPUList(
-    SmallVectorImpl<StringRef> &Values) const {
-  Values.emplace_back("v11");
-}
-
-bool DigitalTargetInfo::setCPU(const std::string &Name) {
-  CPU = llvm::StringSwitch<CPUKind>(Name).Case("v11", CK_V11).Default(CK_NONE);
-
-  return CPU != CK_NONE;
-}
-
-bool DigitalTargetInfo::hasFeature(StringRef Feature) const {
-  return llvm::StringSwitch<bool>(Feature).Case("digital", true).Default(false);
-}
-
-void DigitalTargetInfo::getTargetDefines(const LangOptions &Opts,
-                                       MacroBuilder &Builder) const {
+void DigitalTargetInfo::getTargetDefines(const LangOptions &Opts, MacroBuilder &Builder) const {
   Builder.defineMacro("__digital__");
-
-  switch (CPU) {
-  case CK_V11:
-    Builder.defineMacro("__DIGITAL_V11__");
-    break;
-  case CK_NONE:
-    llvm_unreachable("Unhandled target CPU");
-  }
 }

@@ -12,7 +12,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-#define DEBUG_TYPE "asm-printer"
 #include "Digital.h"
 #include "DigitalTargetMachine.h"
 #include "InstPrinter/DigitalInstPrinter.h"
@@ -28,6 +27,8 @@
 #include "llvm/Support/TargetRegistry.h"
 #include "llvm/Support/raw_ostream.h"
 using namespace llvm;
+
+#define DEBUG_TYPE "asm-printer"
 
 namespace {
   class DigitalAsmPrinter : public AsmPrinter {
@@ -60,7 +61,6 @@ void DigitalAsmPrinter::printOperand(const MachineInstr *MI, int OpNum, raw_ostr
   const MachineOperand &MO = MI->getOperand(OpNum);
   
   if (MO.isReg()) {
-	//printRegName(O, Op.getReg());
     O << DigitalInstPrinter::getRegisterName(MO.getReg());
     return;
   }
@@ -102,7 +102,6 @@ bool DigitalAsmPrinter::PrintAsmMemoryOperand(const MachineInstr *MI,
 void DigitalAsmPrinter::EmitInstruction(const MachineInstr *MI) {
 
 }
-
 // Force static initialization.
 extern "C" void LLVMInitializeDigitalAsmPrinter() {
   RegisterAsmPrinter<DigitalAsmPrinter> X(getTheDigitalTarget());

@@ -23,68 +23,62 @@ namespace targets {
 
 class LLVM_LIBRARY_VISIBILITY DigitalTargetInfo : public TargetInfo {
 
-  enum CPUKind {
-    CK_NONE,
-    CK_V11,
-  } CPU;
-
-  static const TargetInfo::GCCRegAlias GCCRegAliases[];
-  static const char *const GCCRegNames[];
+  //static const TargetInfo::GCCRegAlias GCCRegAliases[];
+  //static const char *const GCCRegNames[];
 
 public:
   DigitalTargetInfo(const llvm::Triple &Triple, const TargetOptions &)
       : TargetInfo(Triple) {
     // Description string has to be kept in sync with backend.
-    resetDataLayout("E" 
-                    "-m:e" 
-                    "-p:16:16" 
-                    "-i16:16"
-                    "-a:0:16" 
-                    "-n16" 
-                    "-S16"
-    );
-
-    // Setting RegParmMax equal to what mregparm was set to in the old
-    // toolchain
-    RegParmMax = 4;
-
-    // Set the default CPU to V11
-    CPU = CK_V11;
-
-    // Temporary approach to make everything at least word-aligned and allow for
-    // safely casting between pointers with different alignment requirements.
-    // TODO: Remove this when there are no more cast align warnings on the
-    // firmware.
-    MinGlobalAlign = 32;
+    resetDataLayout("E-m:e-p:16:16-i16:16-n16-S16");
   }
-
-  void getTargetDefines(const LangOptions &Opts,
-                        MacroBuilder &Builder) const override;
-
-  bool isValidCPUName(StringRef Name) const override;
-
-  void fillValidCPUList(SmallVectorImpl<StringRef> &Values) const override;
-
-  bool setCPU(const std::string &Name) override;
-
-  bool hasFeature(StringRef Feature) const override;
-
   ArrayRef<const char *> getGCCRegNames() const override;
 
   ArrayRef<TargetInfo::GCCRegAlias> getGCCRegAliases() const override;
+
+  void getTargetDefines(const LangOptions &Opts, MacroBuilder &Builder) const override;
+
+  ArrayRef<Builtin::Info> getTargetBuiltins() const override { return None; }
 
   BuiltinVaListKind getBuiltinVaListKind() const override {
     return TargetInfo::VoidPtrBuiltinVaList;
   }
 
-  ArrayRef<Builtin::Info> getTargetBuiltins() const override { return None; }
-
   bool validateAsmConstraint(const char *&Name,
-                             TargetInfo::ConstraintInfo &info) const override {
-    return false;
+                             TargetInfo::ConstraintInfo &Info) const override {
+    switch (*Name) {
+    default:
+      return false;
+    case 'R': // CPU registers.
+      Info.setAllowsRegister();
+      return true;
+    }
   }
 
-  const char *getClobbers() const override { return ""; }
+  const char *getClobbers() const override {
+    // In GCC, $1 is not widely used in generated code (it's used only in a few
+    // specific situations), so there is no real need for users to add it to
+    // the clobbers list if they want to use it in their inline assembly code.
+    //
+    // In LLVM, $1 is treated as a normal GPR and is always allocatable during
+    // code generation, so using it in inline assembly without adding it to the
+    // clobbers list can cause conflicts between the inline assembly code and
+    // the surrounding generated code.
+    //
+    // Another problem is that LLVM is allowed to choose $1 for inline assembly
+    // operands, which will conflict with the ".set at" assembler option (which
+    // we use only for inline assembly, in order to maintain compatibility with
+    // GCC) and will also conflict with the user's usage of $1.
+    //
+    // The easiest way to avoid these conflicts and keep $1 as an allocatable
+    // register for generated code is to automatically clobber $1 for all inline
+    // assembly code.
+    //
+    // FIXME: We should automatically clobber $1 only for inline assembly code
+    // which actually uses it. This would allow LLVM to use $1 for inline
+    // assembly operands if the user's assembly code doesn't use it.
+    return "~{$1}";
+  }
 };
 } // namespace targets
 } // namespace clang

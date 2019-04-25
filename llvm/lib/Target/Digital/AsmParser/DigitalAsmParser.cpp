@@ -42,9 +42,13 @@ class DigitalAsmParser : public MCTargetAsmParser {
 
   bool ParseDirective(AsmToken DirectiveID) override;
 
-// Auto-generated instruction matching functions
+  /// @name Auto-generated Matcher Functions
+  /// {
+
 #define GET_ASSEMBLER_HEADER
 #include "DigitalGenAsmMatcher.inc"
+
+  /// }
 
   OperandMatchResultTy parseImmediate(OperandVector &Operands);
   OperandMatchResultTy parseRegister(OperandVector &Operands);
@@ -54,9 +58,6 @@ class DigitalAsmParser : public MCTargetAsmParser {
 public:
   enum DigitalMatchResultTy {
     Match_Dummy = FIRST_TARGET_MATCH_RESULT_TY,
-#define GET_OPERAND_DIAGNOSTIC_TYPES
-#include "DigitalGenAsmMatcher.inc"
-#undef GET_OPERAND_DIAGNOSTIC_TYPES
   };
 
   DigitalAsmParser(const MCSubtargetInfo &STI, MCAsmParser &Parser,
@@ -211,10 +212,6 @@ public:
 };
 } // end anonymous namespace.
 
-#define GET_REGISTER_MATCHER
-#define GET_MATCHER_IMPLEMENTATION
-#include "DigitalGenAsmMatcher.inc"
-
 bool DigitalAsmParser::MatchAndEmitInstruction(SMLoc IDLoc, unsigned &Opcode,
                                              OperandVector &Operands,
                                              MCStreamer &Out,
@@ -359,3 +356,8 @@ bool DigitalAsmParser::ParseDirective(AsmToken DirectiveID) { return true; }
 extern "C" void LLVMInitializeDigitalAsmParser() {
   RegisterMCAsmParser<DigitalAsmParser> X(getTheDigitalTarget());
 }
+
+#define GET_REGISTER_MATCHER
+#define GET_MATCHER_IMPLEMENTATION
+#define GET_SUBTARGET_FEATURE_NAME
+#include "DigitalGenAsmMatcher.inc"

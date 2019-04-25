@@ -1657,9 +1657,9 @@ bool FPPassManager::runOnFunction(Function &F) {
       PassManagerPrettyStackEntry X(FP, F);
       // errs() << "After PassManagerPrettyStackEntry X(FP, F);\n";
       TimeRegion PassTimer(getPassTimer(FP));
-      // errs() << "After TimeRegion PassTimer(getPassTimer(FP));\n";
+      errs() << "After TimeRegion PassTimer(getPassTimer(FP));\n";
       LocalChanged |= FP->runOnFunction(F);
-      // errs() << "After LocalChanged |= FP->runOnFunction(F);\n";
+      errs() << "After LocalChanged |= FP->runOnFunction(F);\n";
 
       if (EmitICRemark) {
         unsigned NewSize = F.getInstructionCount();
