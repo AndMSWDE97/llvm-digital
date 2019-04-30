@@ -23,6 +23,7 @@ add_llvm_target(DigitalCodeGen
   DigitalFrameLowering.cpp
   DigitalInstrInfo.cpp
   DigitalRegisterInfo.cpp
+  DigitalISelLowering.cpp
   )
 
 add_subdirectory(TargetInfo)

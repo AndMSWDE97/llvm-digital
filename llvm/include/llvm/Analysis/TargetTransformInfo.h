@@ -1623,7 +1623,9 @@ public:
 
 template <typename T>
 TargetTransformInfo::TargetTransformInfo(T Impl)
-    : TTIImpl(new Model<T>(Impl)) {}
+    : TTIImpl(new Model<T>(Impl)) {
+  errs() << "In TargetTransformInfo::TargetTransformInfo(T Impl)\n";
+}
 
 /// Analysis pass providing the \c TargetTransformInfo.
 ///

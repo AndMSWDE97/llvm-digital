@@ -40,7 +40,7 @@ using namespace llvm;
 #define GET_REGINFO_TARGET_DESC
 #include "DigitalGenRegisterInfo.inc"
 
-DigitalRegisterInfo::DigitalRegisterInfo(unsigned HwMode): DigitalGenRegisterInfo(Digital::R1) {}
+DigitalRegisterInfo::DigitalRegisterInfo(): DigitalGenRegisterInfo(Digital::R1) {}
 
 const MCPhysReg *
 DigitalRegisterInfo::getCalleeSavedRegs(const MachineFunction *MF) const {

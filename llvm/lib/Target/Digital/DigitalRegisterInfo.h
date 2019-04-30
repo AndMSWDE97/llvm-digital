@@ -27,7 +27,7 @@ struct DigitalRegisterInfo : public DigitalGenRegisterInfo {
     CPUREGS = 0,
   };
 
-  DigitalRegisterInfo(unsigned HwMode);
+  DigitalRegisterInfo();
 
   const MCPhysReg *getCalleeSavedRegs(const MachineFunction *MF) const override;
 

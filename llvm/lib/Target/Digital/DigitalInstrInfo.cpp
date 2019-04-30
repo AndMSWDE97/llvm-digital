@@ -31,4 +31,4 @@ using namespace llvm;
 // Pin the vtable to this file.
 void DigitalInstrInfo::anchor() {}
 
-DigitalInstrInfo::DigitalInstrInfo(const DigitalSubtarget &STI) : Subtarget(STI){}
+DigitalInstrInfo::DigitalInstrInfo() {}

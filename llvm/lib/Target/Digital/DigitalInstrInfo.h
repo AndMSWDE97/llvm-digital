@@ -38,10 +38,9 @@ class TargetRegisterInfo;
 
 class DigitalInstrInfo : public DigitalGenInstrInfo {
   virtual void anchor();
-  const DigitalSubtarget &Subtarget;
 
 public:
-  DigitalInstrInfo(const DigitalSubtarget &STI);
+  DigitalInstrInfo();
 };
 
 //const DigitalInstrInfo *createDigitalInstrInfo(const DigitalSubtarget &STI) {return new DigitalInstrInfo(STI);}

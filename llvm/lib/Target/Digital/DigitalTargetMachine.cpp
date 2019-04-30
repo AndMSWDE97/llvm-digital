@@ -13,6 +13,7 @@
 #include "DigitalTargetMachine.h"
 #include "Digital.h"
 #include "DigitalTargetObjectFile.h"
+#include "DigitalTargetTransformInfo.h"
 #include "llvm/IR/LegacyPassManager.h"
 #include "llvm/CodeGen/Passes.h"
 #include "llvm/CodeGen/TargetPassConfig.h"
@@ -47,6 +48,11 @@ DigitalTargetMachine::DigitalTargetMachine( const Target &T, const Triple &TT,
 }
 
 DigitalTargetMachine::~DigitalTargetMachine() {}
+
+TargetTransformInfo
+DigitalTargetMachine::getTargetTransformInfo(const Function &F) {
+  return TargetTransformInfo(DigitalTTIImpl(this, F));
+}
 
 namespace {
 //@DigitalPassConfig {

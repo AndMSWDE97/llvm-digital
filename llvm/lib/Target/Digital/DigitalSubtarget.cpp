@@ -37,5 +37,4 @@ DigitalSubtarget::DigitalSubtarget(const Triple &TT, const std::string &CPU,
                                    const std::string &FS, const TargetMachine &TM)
     : DigitalGenSubtargetInfo(TT, CPU, FS),
       FrameLowering(initializeSubtargetDependencies(CPU, FS)), 
-      InstrInfo(initializeSubtargetDependencies(CPU, FS)), 
-	  RegInfo(getHwMode()) {}
+      InstrInfo(), RegInfo(), TLInfo(TM, *this) {}
