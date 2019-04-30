@@ -33,7 +33,8 @@ public:
                      CodeGenOpt::Level OptLevel, bool JIT);
   ~DigitalTargetMachine() override;
   
-  const DigitalSubtarget *getSubtargetImpl() const {
+  
+  const DigitalSubtarget *getSubtargetImpl(const Function &F) const {
     return &Subtarget;
   }
 

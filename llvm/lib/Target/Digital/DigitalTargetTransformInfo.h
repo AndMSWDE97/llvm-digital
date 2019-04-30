@@ -38,7 +38,7 @@ class DigitalTTIImpl : public BasicTTIImplBase<DigitalTTIImpl> {
 
 public:
   explicit DigitalTTIImpl(const DigitalTargetMachine *TM, const Function &F)
-      : BaseT(TM, F.getParent()->getDataLayout()), ST(TM->getSubtargetImpl()),
+      : BaseT(TM, F.getParent()->getDataLayout()), ST(TM->getSubtargetImpl(F)),
         TLI(ST->getTargetLowering()) {}
 
   bool shouldBuildLookupTables() const { return false; }
