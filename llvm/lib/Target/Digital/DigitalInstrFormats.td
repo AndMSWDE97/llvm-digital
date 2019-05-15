@@ -24,7 +24,7 @@
 //===----------------------------------------------------------------------===//
 // Basic Digital Format instruction class : <|opcode|>
 //===----------------------------------------------------------------------===//
-class DigitalInst<bits<6> op, dag outs, dag ins, string asmstr, list<dag> pattern,
+class DigitalInst<dag outs, dag ins, string asmstr, list<dag> pattern,
           InstrItinClass itin>: Instruction
 {
   // Inst and Size: for tablegen(... -gen-emitter) and 
@@ -36,7 +36,7 @@ class DigitalInst<bits<6> op, dag outs, dag ins, string asmstr, list<dag> patter
 
   let Size = 2;
 
-  bits<6> Opcode = op;
+  bits<6> Opcode = 0;
 
   let Inst{14-9} = Opcode;
 
@@ -50,16 +50,23 @@ class DigitalInst<bits<6> op, dag outs, dag ins, string asmstr, list<dag> patter
   field bits<16> SoftFail = 0;
 }
 
+class NoReg<bits<6> op, dag outs, dag ins, string asmstr,
+         list<dag> pattern, InstrItinClass itin>:
+      DigitalInst<outs, ins, asmstr, pattern, itin>
+{
+  let Opcode = op;
+}
+
 //===----------------------------------------------------------------------===//
 // Format with one Register instruction class in Digital : <|opcode|rd|>
 //===----------------------------------------------------------------------===//
 
 class OneReg<bits<6> op, dag outs, dag ins, string asmstr,
          list<dag> pattern, InstrItinClass itin>:
-      DigitalInst<op, outs, ins, asmstr, pattern, itin>
+      DigitalInst<outs, ins, asmstr, pattern, itin>
 {
   bits<4>  rd;
-
+  let Opcode = op;
   let Inst{7-4} = rd;
 }
 
@@ -69,10 +76,10 @@ class OneReg<bits<6> op, dag outs, dag ins, string asmstr,
 
 class Return<bits<6> op, dag outs, dag ins, string asmstr,
          list<dag> pattern, InstrItinClass itin>:
-      DigitalInst<op, outs, ins, asmstr, pattern, itin>
+      DigitalInst<outs, ins, asmstr, pattern, itin>
 {
   bits<4>  rs;
-
+  let Opcode = op;
   let Inst{3-0} = rs;
 }
 
@@ -82,12 +89,12 @@ class Return<bits<6> op, dag outs, dag ins, string asmstr,
 
 class TwoRegs<bits<6> op, dag outs, dag ins, string asmstr,
          list<dag> pattern, InstrItinClass itin>:
-      DigitalInst<op, outs, ins, asmstr, pattern, itin>
+      DigitalInst<outs, ins, asmstr, pattern, itin>
 {
   bits<4>  rd;
   bits<4>  rs;
   bits<4>  rf = rd;
-
+  let Opcode = op;
   let Inst{7-4} = rd;
   let Inst{3-0} = rs;
 }
@@ -98,11 +105,11 @@ class TwoRegs<bits<6> op, dag outs, dag ins, string asmstr,
 
 class RegAndConstant<bits<6> op, dag outs, dag ins, string asmstr,
          list<dag> pattern, InstrItinClass itin>:
-      DigitalInst<op, outs, ins, asmstr, pattern, itin>
+      DigitalInst<outs, ins, asmstr, pattern, itin>
 {
   bits<4>  rd;
   bits<5>  cs;
-
+  let Opcode = op;
   let Inst{7-4} = rd;
   let Inst{8,3-0} = cs;
 }
@@ -112,10 +119,12 @@ class RegAndConstant<bits<6> op, dag outs, dag ins, string asmstr,
 // This is a pseudo format for constant values bigger than 31.
 //===----------------------------------------------------------------------===//
 
-class Pseudo<bits<6> op, dag outs, dag ins, string asmstr,
-         list<dag> pattern, InstrItinClass itin>:
-      DigitalInst<op, outs, ins, asmstr, pattern, itin>
+class DigitalPseudo<dag outs, dag ins, string asmstr, 
+          list<dag> pattern> :
+      DigitalInst<outs, ins, asmstr, pattern, IIPseudo> 
 {
+  let isCodeGenOnly = 1;
+  let isPseudo = 1;
   bits<1>   imm = 1;
   bits<15>  cs;
 

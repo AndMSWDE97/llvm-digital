@@ -38,17 +38,11 @@ using namespace llvm;
 
 DigitalTargetLowering::DigitalTargetLowering(const TargetMachine &TM, const DigitalSubtarget &STI)
     : TargetLowering(TM) {
-
-  errs() << "In DigitalTargetLowering::DigitalTargetLowering(const TargetMachine &TM, const DigitalSubtarget &STI)\n";
   // Set up the register classes.
-  addRegisterClass(MVT::i16, &Digital::CPURegsRegClass);
-
-  errs() << "After addRegisterClass(XLenVT, &Digital::CPURegsRegClass);\n";
+  addRegisterClass(MVT::i16, &Digital::GPRRegClass);
   // Compute derived properties from the register classes.
   computeRegisterProperties(STI.getRegisterInfo());
-  errs() << "After computeRegisterProperties(STI.getRegisterInfo());\n";
   setStackPointerRegisterToSaveRestore(Digital::SP);
-  errs() << "After addRegisterClass(XLenVT, &Digital::CPURegsRegClass);\n";
   // TODO: add all necessary setOperationAction calls.
 
   setBooleanContents(ZeroOrOneBooleanContent);
@@ -103,7 +97,7 @@ SDValue DigitalTargetLowering::LowerFormalArguments(
       //DEBUG(dbgs() << "LowerFormalArguments Unhandled argument type: " << RegVT.getEVTString() << "\n");
       report_fatal_error("unhandled argument type");
     }
-    const unsigned VReg = RegInfo.createVirtualRegister(&Digital::CPURegsRegClass);
+    const unsigned VReg = RegInfo.createVirtualRegister(&Digital::GPRRegClass);
     RegInfo.addLiveIn(VA.getLocReg(), VReg);
     SDValue ArgIn = DAG.getCopyFromReg(Chain, DL, VReg, RegVT);
 
@@ -153,15 +147,15 @@ DigitalTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
     RetOps.push_back(Flag);
   }
 
-  return DAG.getNode(DigitalISD::RET_FLAG, DL, MVT::Other, RetOps);
+  return DAG.getNode(DigitalISD::RET, DL, MVT::Other, RetOps);
 }
 
 const char *DigitalTargetLowering::getTargetNodeName(unsigned Opcode) const {
   switch ((DigitalISD::NodeType)Opcode) {
   case DigitalISD::FIRST_NUMBER:
     break;
-  case DigitalISD::RET_FLAG:
-    return "DigitalISD::RET_FLAG";
+  case DigitalISD::RET:
+    return "DigitalISD::RET";
   }
   return nullptr;
 }

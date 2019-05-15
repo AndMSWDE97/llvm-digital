@@ -60,12 +60,43 @@ BitVector DigitalRegisterInfo::getReservedRegs(const MachineFunction &MF) const 
   return Reserved;
 }
 
+bool DigitalRegisterInfo::requiresRegisterScavenging(
+    const MachineFunction & /*MF*/) const {
+  return true;
+}
+
+bool DigitalRegisterInfo::trackLivenessAfterRegAlloc(
+    const MachineFunction & /*MF*/) const {
+  return true;
+}
+
 void DigitalRegisterInfo::eliminateFrameIndex(MachineBasicBlock::iterator II,
                                             int SPAdj, unsigned FIOperandNum,
                                             RegScavenger *RS) const {
   report_fatal_error("Subroutines not supported yet");
 }
 
-unsigned DigitalRegisterInfo::getFrameRegister(const MachineFunction &MF) const {
+bool DigitalRegisterInfo::hasBasePointer(const MachineFunction &MF) const {
+  const MachineFrameInfo &MFI = MF.getFrameInfo();
+  // When we need stack realignment and there are dynamic allocas, we can't
+  // reference off of the stack pointer, so we reserve a base pointer.
+  if (needsStackRealignment(MF) && MFI.hasVarSizedObjects())
+    return true;
+
+  return false;
+}
+
+unsigned DigitalRegisterInfo::getRARegister() const { return Digital::RA; }
+
+unsigned
+DigitalRegisterInfo::getFrameRegister(const MachineFunction & /*MF*/) const {
   return Digital::R8;
+}
+
+unsigned DigitalRegisterInfo::getBaseRegister() const { return Digital::BP; }
+
+const uint32_t *
+DigitalRegisterInfo::getCallPreservedMask(const MachineFunction & /*MF*/,
+                                        CallingConv::ID /*CC*/) const {
+  return CSR_Digital_RegMask;
 }

@@ -15,11 +15,19 @@
 // Digital profiles and nodes
 //===----------------------------------------------------------------------===//
 
-//def SDT_DigitalRet          : SDTypeProfile<0, 1, [SDTCisInt<0>]>;
+def SDT_DigitalRet          : SDTypeProfile<0, 1, [SDTCisInt<0>]>;
+def SDT_DigitalCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i16>]>;
+def SDT_DigitalCallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i16>, SDTCisVT<1, i16>]>;
 
-// Return
-//def DigitalRet : SDNode<"DigitalISD::Ret", SDTNone,
-//                     [SDNPHasChain, SDNPOptInGlue, SDNPVariadic]>;
+def DigitalCallseq_start :
+                     SDNode<"ISD::CALLSEQ_START", SDT_DigitalCallSeqStart,
+                       [SDNPHasChain, SDNPOutGlue]>;
+def DigitalCallseq_end :
+                     SDNode<"ISD::CALLSEQ_END",   SDT_DigitalCallSeqEnd,
+                       [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
+
+def DigitalRet : SDNode<"DigitalISD::RET", SDTNone,
+                       [SDNPHasChain, SDNPOptInGlue, SDNPVariadic]>;
 
 //===----------------------------------------------------------------------===//
 // Instruction format superclass
@@ -40,7 +48,7 @@ def simm16      : Operand<i32> {
 // Address operand
 def mem : Operand<iPTR> {
   let PrintMethod = "printMemOperand";
-  let MIOperandInfo = (ops CPURegs, simm16);
+  let MIOperandInfo = (ops GPR, simm16);
   let EncoderMethod = "getMemEncoding";
 }
 
@@ -53,38 +61,6 @@ def immSExt16  : PatLeaf<(imm), [{ return isInt<16>(N->getSExtValue()); }]>;
 def addr : 
   ComplexPattern<iPTR, 2, "SelectAddr", [frameindex], [SDNPWantParent]>;
 
-//===----------------------------------------------------------------------===//
-// Pattern fragment for load/store
-//===----------------------------------------------------------------------===//
-
-// class AlignedLoad<PatFrag Node> :
-//   PatFrag<(ops node:$ptr), (Node node:$ptr), [{
-//   LoadSDNode *LD = cast<LoadSDNode>(N);
-//   return LD->getMemoryVT().getSizeInBits()/8 <= LD->getAlignment();
-// }]>;
-
-// class AlignedStore<PatFrag Node> :
-//   PatFrag<(ops node:$val, node:$ptr), (Node node:$val, node:$ptr), [{
-//   StoreSDNode *SD = cast<StoreSDNode>(N);
-//   return SD->getMemoryVT().getSizeInBits()/8 <= SD->getAlignment();
-// }]>;
-
-// // Load/Store PatFrags.
-// def load_a          : AlignedLoad<load>;
-// def store_a         : AlignedStore<store>;
-
-//===----------------------------------------------------------------------===//
-// Instructions specific format
-//===----------------------------------------------------------------------===//
-
-// Arithmetic and logical instructions with 2 register operands.
-// class ArithLogicI<bits<6> op, string instr_asm, SDNode OpNode,
-//                   Operand Od, PatLeaf imm_type, RegisterClass RC> :
-//   FL<op, (outs GPROut:$ra), (ins RC:$rb, Od:$imm16),
-//      !strconcat(instr_asm, "\t$ra, $rb, $imm16"),
-//      [(set GPROut:$ra, (OpNode RC:$rb, imm_type:$imm16))], IIAlu> {
-//   let isReMaterializable = 1;
-// }
 
 class ArithLogic<bits<6> op, string instr_asm, SDNode OpNode,
                  InstrItinClass itin, RegisterClass RC, bit isComm = 0> :
@@ -94,44 +70,6 @@ class ArithLogic<bits<6> op, string instr_asm, SDNode OpNode,
   let isCommutable = isComm;	// e.g. add rb rc =  add rc rb
   let isReMaterializable = 1;
 }
-
-// class FMem<bits<6> op, dag outs, dag ins, string asmstr, list<dag> pattern,
-//           InstrItinClass itin>: FL<op, outs, ins, asmstr, pattern, itin> {
-//   bits<20> addr;
-//   let Inst{19-16} = addr{19-16};
-//   let Inst{15-0}  = addr{15-0};
-//   let DecoderMethod = "DecodeMem";
-// }
-
-// Memory Load/Store
-// let canFoldAsLoad = 1 in
-// class LoadM<bits<6> op, string instr_asm, PatFrag OpNode, RegisterClass RC,
-//             Operand MemOpnd, bit Pseudo>:
-//   FMem<op, (outs RC:$ra), (ins MemOpnd:$addr),
-//      !strconcat(instr_asm, "\t$ra, $addr"),
-//      [(set RC:$ra, (OpNode addr:$addr))], IILoad> {
-//   let isPseudo = Pseudo;
-// }
-
-// class StoreM<bits<6> op, string instr_asm, PatFrag OpNode, RegisterClass RC,
-//              Operand MemOpnd, bit Pseudo>:
-//   FMem<op, (outs), (ins RC:$ra, MemOpnd:$addr),
-//      !strconcat(instr_asm, "\t$ra, $addr"),
-//      [(OpNode RC:$ra, addr:$addr)], IIStore> {
-//   let isPseudo = Pseudo;
-// }
-
-// //@ 32-bit load.
-// multiclass LoadM32<bits<6> op, string instr_asm, PatFrag OpNode,
-//                    bit Pseudo = 0> {
-//   def #NAME# : LoadM<op, instr_asm, OpNode, GPROut, mem, Pseudo>;
-// }
-
-// // 32-bit store.
-// multiclass StoreM32<bits<6> op, string instr_asm, PatFrag OpNode,
-//                     bit Pseudo = 0> {
-//   def #NAME# : StoreM<op, instr_asm, OpNode, CPURegs, mem, Pseudo>;
-// }
 
 //@JumpFR {
 let isBranch=1, isTerminator=1, isBarrier=1, hasDelaySlot = 1,
@@ -143,60 +81,41 @@ class JumpFR<bits<6> op, string instr_asm, RegisterClass RC>:
 //@JumpFR }
 
 // Return instruction
-class RetBase<RegisterClass RC>: JumpFR<0x35, "rret", RC> {
+class RetBase<RegisterClass RC>: JumpFR<0x35, "RRET", RC> {
   let isReturn = 1;
   let isCodeGenOnly = 1;
   let hasCtrlDep = 1;
   let hasExtraSrcRegAllocReq = 1;
 }
 
-  
-//===----------------------------------------------------------------------===//
-// Instruction definition
-//===----------------------------------------------------------------------===//
+let Defs = [SP], Uses = [SP] in {
+def ADJCALLSTACKDOWN : DigitalPseudo<(outs), (ins i16imm:$amt1, i16imm:$amt2),
+                              "#ADJCALLSTACKDOWN",
+                              [(DigitalCallseq_start timm:$amt1, timm:$amt2)]>;
+def ADJCALLSTACKUP   : DigitalPseudo<(outs), (ins i16imm:$amt1, i16imm:$amt2),
+                              "#ADJCALLSTACKUP",
+                              [(DigitalCallseq_end timm:$amt1, timm:$amt2)]>;
+}
 
-//===----------------------------------------------------------------------===//
-// Digital Instructions
-//===----------------------------------------------------------------------===//
+def NOP     : NoReg<0x0, (outs), (ins), "NOP", [], IIAlu>;
 
-// No operation
-def NOP     : DigitalInst<0x0, (outs), (ins), "NOP", [], IIAlu>;
+def MOV     : TwoRegs<0x1, (outs GPR:$rd), (ins GPR:$rs), "MOV $rd,$rs",
+                [(set GPR:$rd, (load GPR:$rs))], IIAlu>;
 
-def MOV     : TwoRegs<0x1, (outs CPURegs:$rd), (ins CPURegs:$rs), "MOV $rd,$rs",
-                [(set CPURegs:$rd, (load CPURegs:$rs))], IIAlu>;
+def ADD     : ArithLogic<0x2, "ADD", add, IIAlu, GPR, 1>;
+def SUB     : ArithLogic<0x4, "SUB", sub, IIAlu, GPR>;
+def AND     : ArithLogic<0x6, "AND", and, IIAlu, GPR, 1>;
+def OR      : ArithLogic<0x7, "OR",  or,  IIAlu, GPR, 1>;
+def EOR     : ArithLogic<0x8, "EOR", xor, IIAlu, GPR, 1>;
 
-def ADD     : ArithLogic<0x2, "ADD", add, IIAlu, CPURegs, 1>;
-def SUB     : ArithLogic<0x4, "SUB", sub, IIAlu, CPURegs>;
-def AND     : ArithLogic<0x6, "AND", and, IIAlu, CPURegs, 1>;
-def OR      : ArithLogic<0x7, "OR",  or,  IIAlu, CPURegs, 1>;
-def EOR     : ArithLogic<0x8, "EOR", xor, IIAlu, CPURegs, 1>;
-
-def ST      : TwoRegs<0x26, (outs), (ins CPURegs:$rs, mem:$rd), "ST $rd, $rs", 
+def ST      : TwoRegs<0x26, (outs), (ins GPR:$rs, mem:$rd), "ST $rd, $rs", 
                 [(store i16:$rs, addr:$rd)], IIStore>;
 
+def JMP      : JumpFR<0x36, "JMP", GPR>;
 
+let isReturn=1, isTerminator=1, isBarrier=1, hasCtrlDep=1 in {
+  let hasDelaySlot=1 in
+  def RET : DigitalPseudo<(outs), (ins), "" , [(DigitalRet)]>;
+}
 
-/// Load and Store Instructions
-///  aligned
-// defm LD     : LoadM32<0x27,  "ld",  load_a>;
-// defm ST     : StoreM32<0x26, "st",  store_a>;
-
-/// Arithmetic Instructions (ALU Immediate)
-// IR "add" defined in include/llvm/Target/TargetSelectionDAG.td, line 315 (def add).
-// def ADDi   : ArithLogicI<0xb, "addi", add, simm16, immSExt16, CPURegs>;
-
-/// Arithmetic Instructions (3-Operand, R-Type)
-
-/// Shift Instructions
-
-def JMP      : JumpFR<0x36, "JMP", CPURegs>;
-
-def RRET     : RetBase<CPURegs>;
-
-//===----------------------------------------------------------------------===//
-//  Arbitrary patterns that map to one or more instructions
-//===----------------------------------------------------------------------===//
-
-// Small immediates
-// def : Pat<(i32 immSExt16:$in),
-//           (ADDiu ZERO, imm:$in)>;
+def RRET     : RetBase<GPR>;
