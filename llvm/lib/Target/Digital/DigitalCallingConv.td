@@ -16,7 +16,6 @@ def RetCC_Digital : CallingConv<[
   // Promote i8 return values to i16.
   CCIfType<[i8], CCPromoteToType<i16>>,
 
-  // i16 are returned in registers A, B, C
   CCIfType<[i16], CCAssignToReg<[R10, R11, R12]>>
 ]>;
 

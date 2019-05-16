@@ -11,8 +11,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef DIGITALMACHINEFUNCTIONINFO_H
-#define DIGITALMACHINEFUNCTIONINFO_H
+#ifndef DIGITALFUNCTIONINFO_H
+#define DIGITALFUNCTIONINFO_H
 
 #include "llvm/CodeGen/MachineFunction.h"
 
@@ -20,7 +20,7 @@ namespace llvm {
 
 /// DigitalMachineFunctionInfo - This class is derived from MachineFunction and
 /// contains private Digital target-specific information for each MachineFunction.
-class DigitalMachineFunctionInfo : public MachineFunctionInfo {
+class DigitalFunctionInfo : public MachineFunctionInfo {
   virtual void anchor();
 
   /// CalleeSavedFrameSize - Size of the callee-saved register portion of the
@@ -31,9 +31,9 @@ class DigitalMachineFunctionInfo : public MachineFunctionInfo {
   int ReturnAddrIndex;
 
 public:
-  DigitalMachineFunctionInfo() : CalleeSavedFrameSize(0) {}
+  DigitalFunctionInfo() : CalleeSavedFrameSize(0) {}
 
-  explicit DigitalMachineFunctionInfo(MachineFunction &MF)
+  explicit DigitalFunctionInfo(MachineFunction &MF)
     : CalleeSavedFrameSize(0), ReturnAddrIndex(0) {}
 
   unsigned getCalleeSavedFrameSize() const { return CalleeSavedFrameSize; }

@@ -11,6 +11,6 @@
 
 using namespace llvm;
 
-void DigitalMachineFunctionInfo::anchor() {
+void DigitalFunctionInfo::anchor() {
     
  }
