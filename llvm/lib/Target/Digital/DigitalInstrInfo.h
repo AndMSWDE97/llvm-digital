@@ -141,6 +141,8 @@ public:
                         ArrayRef<MachineOperand> Condition,
                         const DebugLoc &DL,
                         int *BytesAdded = nullptr) const override;*/
+ private:
+     void expandRet(MachineBasicBlock *MBB, MachineInstr &MI) const;
 };
 
 } // namespace llvm

@@ -38,18 +38,22 @@ using namespace llvm;
 
 DigitalTargetLowering::DigitalTargetLowering(const TargetMachine &TM, const DigitalSubtarget &STI)
     : TargetLowering(TM) {
-  // Set up the register classes.
+
   addRegisterClass(MVT::i16, &Digital::GPRRegClass);
-  // Compute derived properties from the register classes.
+
   computeRegisterProperties(STI.getRegisterInfo());
+
   setStackPointerRegisterToSaveRestore(Digital::SP);
-  // TODO: add all necessary setOperationAction calls.
+
+  setTargetDAGCombine(ISD::ADD);
+  setTargetDAGCombine(ISD::SUB);
+  setTargetDAGCombine(ISD::AND);
+  setTargetDAGCombine(ISD::OR);
+  setTargetDAGCombine(ISD::XOR);
 
   setBooleanContents(ZeroOrOneBooleanContent);
-
-  // Function alignments (log2).
-  setMinFunctionAlignment(3);
-  setPrefFunctionAlignment(3);
+  setMinFunctionAlignment(2);
+  setPrefFunctionAlignment(2);
 }
 
 SDValue DigitalTargetLowering::LowerOperation(SDValue Op,

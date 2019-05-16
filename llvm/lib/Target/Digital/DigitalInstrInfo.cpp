@@ -114,8 +114,24 @@ bool DigitalInstrInfo::areMemAccessesTriviallyDisjoint(
   return false;
 }
 
-bool DigitalInstrInfo::expandPostRAPseudo(MachineInstr & /*MI*/) const {
-  return false;
+bool DigitalInstrInfo::expandPostRAPseudo(MachineInstr &MI) const {
+  MachineBasicBlock *MBB = MI.getParent();
+  switch(MI.getOpcode()) {
+  default:
+    return false;
+  case Digital::RET:
+    expandRet(MBB, MI);
+    break;
+  }
+
+  MBB->erase(MI);
+  return true;
+}
+
+void DigitalInstrInfo::expandRet(MachineBasicBlock *MBB,
+				 MachineInstr &MI) const {
+  
+  BuildMI(*MBB, MI, MI.getDebugLoc(), get(Digital::RET)).addReg(Digital::R0);
 }
 
 std::pair<unsigned, unsigned>
