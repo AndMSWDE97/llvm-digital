@@ -27,29 +27,61 @@ using namespace llvm;
 #define PRINT_ALIAS_INSTR
 #include "DigitalGenAsmWriter.inc"
 
-void DigitalInstPrinter::printInst(const MCInst *MI, raw_ostream &O, StringRef Annot, const MCSubtargetInfo &STI) {
-    
-    printInstruction(MI, O);
-    printAnnotation(O, Annot);
+void DigitalInstPrinter::printRegName(raw_ostream &OS, unsigned RegNo) const {
+  OS << StringRef(getRegisterName(RegNo));
+}
+
+bool DigitalInstPrinter::printInst(const MCInst *MI, raw_ostream &OS,
+                                 StringRef Alias, unsigned OpNo0,
+                                 unsigned OpNo1) {
+  OS << "\t" << Alias << " ";
+  printOperand(MI, OpNo0, OS);
+  OS << ", ";
+  printOperand(MI, OpNo1, OS);
+  return true;
+}
+
+bool DigitalInstPrinter::printAlias(const MCInst *MI, raw_ostream &OS) {
+  switch (MI->getOpcode()) {
+  default:
+    return false;
+  }
+}
+
+void DigitalInstPrinter::printInst(const MCInst *MI, raw_ostream &OS,
+                                 StringRef Annotation,
+                                 const MCSubtargetInfo & /*STI*/) {
+  if (!printAlias(MI, OS) && !printAliasInstr(MI, OS))
+    printInstruction(MI, OS);
+  printAnnotation(OS, Annotation);
 }
 
 void DigitalInstPrinter::printOperand(const MCInst *MI, unsigned OpNo,
-                                    raw_ostream &O, const char *Modifier) {
+                                    raw_ostream &OS, const char *Modifier) {
   assert((Modifier == 0 || Modifier[0] == 0) && "No modifiers supported");
-  const MCOperand &MO = MI->getOperand(OpNo);
-
-  if (MO.isReg()) {
-    O << getRegisterName(MO.getReg());
-    return;
+  const MCOperand &Op = MI->getOperand(OpNo);
+  if (Op.isReg())
+    OS << getRegisterName(Op.getReg());
+  else if (Op.isImm())
+    OS << formatHex(Op.getImm());
+  else {
+    assert(Op.isExpr() && "Expected an expression");
+    Op.getExpr()->print(OS, &MAI);
   }
+}
 
-  if (MO.isImm()) {
-    O << MO.getImm();
-    return;
+void DigitalInstPrinter::printMemImmOperand(const MCInst *MI, unsigned OpNo,
+                                          raw_ostream &OS) {
+  const MCOperand &Op = MI->getOperand(OpNo);
+  if (Op.isImm()) {
+    OS << '[' << formatHex(Op.getImm()) << ']';
+  } else {
+    // Symbolic operand will be lowered to immediate value by linker
+    assert(Op.isExpr() && "Expected an expression");
+    OS << '[';
+    Op.getExpr()->print(OS, &MAI);
+    OS << ']';
   }
-
-  assert(MO.isExpr() && "Unknown operand kind in printOperand");
-  MO.getExpr()->print(O, &MAI);
 }
 
 void DigitalInstPrinter::printMemOperand(const MCInst *MI, int opNum, raw_ostream &O) {

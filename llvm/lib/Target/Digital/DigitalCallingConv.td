@@ -35,4 +35,4 @@ def CC_Digital : CallingConv<[
   CCIfType<[i16], CCAssignToStack<1, 1>>
 ]>;
 
-def CSR_Digital : CalleeSavedRegs<(add R5, R6, R7, R8, R9)>;
+def CSR_Digital : CalleeSavedRegs<(add SP)>;

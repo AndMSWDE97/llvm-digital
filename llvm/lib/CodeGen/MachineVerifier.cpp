@@ -1649,6 +1649,7 @@ void MachineVerifier::checkLiveness(const MachineOperand *MO, unsigned MONum) {
       if (TargetRegisterInfo::isPhysicalRegister(Reg)) {
         // Reserved registers may be used even when 'dead'.
         bool Bad = !isReserved(Reg);
+        errs() << "After !isReserved(Reg): " << Bad << "\n";
         // We are fine if just any subregister has a defined value.
         if (Bad) {
           for (MCSubRegIterator SubRegs(Reg, TRI); SubRegs.isValid();
@@ -1659,6 +1660,7 @@ void MachineVerifier::checkLiveness(const MachineOperand *MO, unsigned MONum) {
             }
           }
         }
+        errs() << "After first if: " << Bad << "\n";
         // If there is an additional implicit-use of a super register we stop
         // here. By definition we are fine if the super register is not
         // (completely) dead, if the complete super register is dead we will
@@ -1680,6 +1682,7 @@ void MachineVerifier::checkLiveness(const MachineOperand *MO, unsigned MONum) {
             }
           }
         }
+        errs() << "After second if: " << Bad << "\n";
         if (Bad)
           report("Using an undefined physical register", MO, MONum);
       } else if (MRI->def_empty(Reg)) {

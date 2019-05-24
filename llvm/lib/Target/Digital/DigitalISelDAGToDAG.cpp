@@ -44,7 +44,8 @@ public:
       : SelectionDAGISel(TargetMachine) {}
 
   bool runOnMachineFunction(MachineFunction &MF) override {
-    return SelectionDAGISel::runOnMachineFunction(MF);
+    SelectionDAGISel::runOnMachineFunction(MF);
+    return true;
   }
 
   StringRef getPassName() const override {
