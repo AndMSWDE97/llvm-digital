@@ -40,7 +40,7 @@ using namespace llvm;
 #define GET_REGINFO_TARGET_DESC
 #include "DigitalGenRegisterInfo.inc"
 
-DigitalRegisterInfo::DigitalRegisterInfo(): DigitalGenRegisterInfo(Digital::R1) {}
+DigitalRegisterInfo::DigitalRegisterInfo(): DigitalGenRegisterInfo(Digital::R0) {}
 
 const MCPhysReg *
 DigitalRegisterInfo::getCalleeSavedRegs(const MachineFunction *MF) const {
@@ -53,9 +53,9 @@ BitVector DigitalRegisterInfo::getReservedRegs(const MachineFunction &MF) const 
   //const DigitalSubtarget &Subtarget = MF.getSubtarget<DigitalSubtarget>();
 
   // Use markSuperRegs to ensure any register aliases are also reserved
-  markSuperRegs(Reserved, Digital::BP); // BP
-  markSuperRegs(Reserved, Digital::SP); // SP
-  markSuperRegs(Reserved, Digital::RA); // RA
+  //markSuperRegs(Reserved, Digital::BP); // BP
+  //markSuperRegs(Reserved, Digital::SP); // SP
+  //markSuperRegs(Reserved, Digital::RA); // RA
   assert(checkAllSuperRegsMarked(Reserved));
   return Reserved;
 }
@@ -84,6 +84,12 @@ bool DigitalRegisterInfo::hasBasePointer(const MachineFunction &MF) const {
     return true;
 
   return false;
+}
+
+const TargetRegisterClass *
+DigitalRegisterInfo::getPointerRegClass(const MachineFunction &MF,
+                                       unsigned Kind) const {
+  return &Digital::GPRRegClass;
 }
 
 unsigned DigitalRegisterInfo::getRARegister() const { return Digital::RA; }

@@ -41,6 +41,8 @@ struct DigitalRegisterInfo : public DigitalGenRegisterInfo {
   void eliminateFrameIndex(MachineBasicBlock::iterator II, int SPAdj,
                            unsigned FIOperandNum,
                            RegScavenger *RS = nullptr) const override;
+  const TargetRegisterClass* getPointerRegClass(const MachineFunction &MF,
+                                                unsigned Kind = 0) const;
 
   // Debug information queries.
   unsigned getRARegister() const;

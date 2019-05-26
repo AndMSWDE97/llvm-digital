@@ -27,19 +27,19 @@ class DigitalReg<bits<16> Enc, string n> : Register<n> {
 //@ All registers definition
 let Namespace = "Digital" in {
   //@ General Purpose Registers
-  def R0   : DigitalReg<0,  "0">,    DwarfRegNum<[0]>;
-  def R1   : DigitalReg<1,  "1">,    DwarfRegNum<[1]>;
-  def R2   : DigitalReg<2,  "2">,    DwarfRegNum<[2]>;
-  def R3   : DigitalReg<3,  "3">,    DwarfRegNum<[3]>;
-  def R4   : DigitalReg<4,  "4">,    DwarfRegNum<[4]>;
-  def R5   : DigitalReg<5,  "5">,    DwarfRegNum<[5]>;
-  def R6   : DigitalReg<6,  "6">,    DwarfRegNum<[6]>;
-  def R7   : DigitalReg<7,  "7">,    DwarfRegNum<[7]>;
-  def R8   : DigitalReg<8,  "8">,    DwarfRegNum<[8]>;
-  def R9   : DigitalReg<9,  "9">,    DwarfRegNum<[9]>;
-  def R10  : DigitalReg<10, "10">,   DwarfRegNum<[10]>;
-  def R11  : DigitalReg<11, "11">,   DwarfRegNum<[11]>;
-  def R12  : DigitalReg<12, "12">,   DwarfRegNum<[12]>;
+  def R0   : DigitalReg<0,  "r0">,    DwarfRegNum<[0]>;
+  def R1   : DigitalReg<1,  "r1">,    DwarfRegNum<[1]>;
+  def R2   : DigitalReg<2,  "r2">,    DwarfRegNum<[2]>;
+  def R3   : DigitalReg<3,  "r3">,    DwarfRegNum<[3]>;
+  def R4   : DigitalReg<4,  "r4">,    DwarfRegNum<[4]>;
+  def R5   : DigitalReg<5,  "r5">,    DwarfRegNum<[5]>;
+  def R6   : DigitalReg<6,  "r6">,    DwarfRegNum<[6]>;
+  def R7   : DigitalReg<7,  "r7">,    DwarfRegNum<[7]>;
+  def R8   : DigitalReg<8,  "r8">,    DwarfRegNum<[8]>;
+  def R9   : DigitalReg<9,  "r9">,    DwarfRegNum<[9]>;
+  def R10  : DigitalReg<10, "r10">,   DwarfRegNum<[10]>;
+  def R11  : DigitalReg<11, "r11">,   DwarfRegNum<[11]>;
+  def R12  : DigitalReg<12, "r12">,   DwarfRegNum<[12]>;
   def BP   : DigitalReg<13, "bp">,   DwarfRegNum<[13]>;
   def SP   : DigitalReg<14, "sp">,   DwarfRegNum<[14]>;
   def RA   : DigitalReg<15, "ra">,   DwarfRegNum<[15]>;

@@ -16,7 +16,7 @@ def RetCC_Digital : CallingConv<[
   // Promote i8 return values to i16.
   CCIfType<[i8], CCPromoteToType<i16>>,
 
-  CCIfType<[i16], CCAssignToReg<[R10, R11, R12]>>
+  CCIfType<[i16], CCAssignToReg<[R0, R1, R2]>>
 ]>;
 
 //===----------------------------------------------------------------------===//
