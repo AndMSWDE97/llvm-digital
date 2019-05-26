@@ -108,7 +108,6 @@ public:
   /// Virtual method implemented by subclasses that returns a reference to that
   /// target's TargetSubtargetInfo-derived member variable.
   virtual const TargetSubtargetInfo *getSubtargetImpl(const Function &) const {
-    errs() << "In virtual const TargetSubtargetInfo *getSubtargetImpl(const Function &) const\n";
     return nullptr;
   }
   virtual TargetLoweringObjectFile *getObjFileLowering() const {

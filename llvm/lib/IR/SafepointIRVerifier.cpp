@@ -206,7 +206,6 @@ struct SafepointIRVerifier : public FunctionPass {
   }
 
   bool runOnFunction(Function &F) override {
-    errs() << "In bool runOnFunction(Function &F) override SafepointIRVerifier.cpp\n";
     auto &DT = getAnalysis<DominatorTreeWrapperPass>().getDomTree();
     CFGDeadness CD;
     CD.processFunction(F, DT);

@@ -91,7 +91,6 @@ LLVMTargetMachine::LLVMTargetMachine(const Target &T,
 
 TargetTransformInfo
 LLVMTargetMachine::getTargetTransformInfo(const Function &F) {
-  errs() << "In TargetTransformInfo LLVMTargetMachine::getTargetTransformInfo(const Function &F)\n";
   return TargetTransformInfo(BasicTTIImpl(this, F));
 }
 
@@ -198,36 +197,27 @@ bool LLVMTargetMachine::addPassesToEmitFile(PassManagerBase &PM,
                                             CodeGenFileType FileType,
                                             bool DisableVerify,
                                             MachineModuleInfo *MMI) {
-  errs() << "LLVMTargetMachine::addPassesToEmitFile\n";
-
   // Add common CodeGen passes.
   if (!MMI) {
     errs() << "if(!MMI)\n";
 	  MMI = new MachineModuleInfo(this);
   }
     
-  errs() << "Before addPassesToGenerateCode\n";
   TargetPassConfig *PassConfig = addPassesToGenerateCode(*this, PM, DisableVerify, *MMI);
-  errs() << "After addPassesToGenerateCode\n";
 
   if (!PassConfig) {
     errs() << "LLVMTargetMachine::addPassesToEmitFile -> if(!PassConfig)\n";
     return true;
   }
-    
-  errs() << "After if(!PassConfig)\n";
 
   if (!TargetPassConfig::willCompleteCodeGenPipeline()) {
-    errs() << "In if(!TargetPassConfig::willCompleteCodeGenPipeline())\n";
     PM.add(createPrintMIRPass(Out));
   } else if (addAsmPrinter(PM, Out, DwoOut, FileType, MMI->getContext())) {
-    errs() << "LLVMTargetMachine::addPassesToEmitFile -> if(addAsmPrinter(...))\n";
     return true;
   }
     
 
   PM.add(createFreeMachineFunctionPass());
-  errs() << "LLVMTargetMachine::addPassesToEmitFile -> return false\n";
   return false;
 }
 

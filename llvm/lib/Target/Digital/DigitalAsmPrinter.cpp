@@ -47,16 +47,10 @@ namespace {
 
     void printOperand(const MachineInstr *MI, int OpNum,
                       raw_ostream &O, const char* Modifier = 0);
-                      
     void printMemOperand(const MachineInstr *MI, int opNum, raw_ostream &O);
-    void printSrcMemOperand(const MachineInstr *MI, int OpNum,
-                            raw_ostream &O);
     bool PrintAsmOperand(const MachineInstr *MI, unsigned OpNo,
                          unsigned AsmVariant, const char *ExtraCode,
                          raw_ostream &O);
-    bool PrintAsmMemoryOperand(const MachineInstr *MI,
-                               unsigned OpNo, unsigned AsmVariant,
-                               const char *ExtraCode, raw_ostream &O);
     void EmitInstruction(const MachineInstr *MI);
   private:
     void customEmitInstruction(const MachineInstr *MI);
@@ -108,24 +102,40 @@ void DigitalAsmPrinter::printMemOperand(const MachineInstr *MI, int opNum, raw_o
   O << "]";
 }
 
-void DigitalAsmPrinter::printSrcMemOperand(const MachineInstr *MI, int OpNum,
-                                          raw_ostream &O) {
-  
-}
-
-/// PrintAsmOperand - Print out an operand for an inline asm expression.
-///
 bool DigitalAsmPrinter::PrintAsmOperand(const MachineInstr *MI, unsigned OpNo,
                                        unsigned AsmVariant,
                                        const char *ExtraCode, raw_ostream &O) {
-    printOperand(MI, OpNo, O);
-    return false;
-}
+  if (ExtraCode && ExtraCode[0]) {
+    if (ExtraCode[1])
+      return true; // Unknown modifier.
 
-bool DigitalAsmPrinter::PrintAsmMemoryOperand(const MachineInstr *MI,
-                                             unsigned OpNo, unsigned AsmVariant,
-                                             const char *ExtraCode,
-                                             raw_ostream &O) {
+    switch (ExtraCode[0]) {
+    // The highest-numbered register of a pair.
+    case 'H': {
+      if (OpNo == 0)
+        return true;
+      const MachineOperand &FlagsOP = MI->getOperand(OpNo - 1);
+      if (!FlagsOP.isImm())
+        return true;
+      unsigned Flags = FlagsOP.getImm();
+      unsigned NumVals = InlineAsm::getNumOperandRegisters(Flags);
+      if (NumVals != 2)
+        return true;
+      unsigned RegOp = OpNo + 1;
+      if (RegOp >= MI->getNumOperands())
+        return true;
+      const MachineOperand &MO = MI->getOperand(RegOp);
+      if (!MO.isReg())
+        return true;
+      unsigned Reg = MO.getReg();
+      O << DigitalInstPrinter::getRegisterName(Reg);
+      return false;
+    }
+    default:
+      return true; // Unknown modifier.
+    }
+  }
+  printOperand(MI, OpNo, O);
   return false;
 }
 

@@ -1171,18 +1171,14 @@ int TargetTransformInfo::getInstructionThroughput(const Instruction *I) const {
 TargetTransformInfo::Concept::~Concept() {}
 
 TargetIRAnalysis::TargetIRAnalysis() : TTICallback(&getDefaultTTI) {
-  errs() << "In TargetIRAnalysis::TargetIRAnalysis() : TTICallback(&getDefaultTTI)\n";
 }
 
 TargetIRAnalysis::TargetIRAnalysis(
     std::function<Result(const Function &)> TTICallback)
     : TTICallback(std::move(TTICallback)) {
-  errs() << "In TargetIRAnalysis::TargetIRAnalysis(std::function<Result(const "
-            "Function &)> TTICallback)\n";
 }
 
 TargetIRAnalysis::Result TargetIRAnalysis::run(const Function &F, FunctionAnalysisManager &) {
-  errs() << "In TargetIRAnalysis::Result TargetIRAnalysis::run(const Function &F, FunctionAnalysisManager &)\n";
   return TTICallback(F);
 }
 
@@ -1213,11 +1209,9 @@ TargetTransformInfoWrapperPass::TargetTransformInfoWrapperPass(
 }
 
 TargetTransformInfo &TargetTransformInfoWrapperPass::getTTI(const Function &F) {
-  errs() << "In TargetTransformInfo &TargetTransformInfoWrapperPass::getTTI(const Function &F)\n";
   errs() << F.getName() << " : " << "\n";
   FunctionAnalysisManager DummyFAM;
   TTI = TIRA.run(F, DummyFAM);
-  errs() << "After TTI = TIRA.run(F, DummyFAM);\n";
   return *TTI;
 }
 

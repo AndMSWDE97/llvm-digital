@@ -66,8 +66,6 @@ public:
       : ModulePass(ID), P(OS, Banner, ShouldPreserveUseListOrder) {}
 
   bool runOnModule(Module &M) override {
-
-	errs() << "In  bool runOnModule(Module &M) inside IRPrintingPasses.cpp\n";
     ModuleAnalysisManager DummyMAM;
     P.run(M, DummyMAM);
     return false;
@@ -91,7 +89,6 @@ public:
 
   // This pass just prints a banner followed by the function as it's processed.
   bool runOnFunction(Function &F) override {
-    errs() << "In bool runOnFunction(Function &F) override IRPrintinPasses.cpp\n";
     FunctionAnalysisManager DummyFAM;
     P.run(F, DummyFAM);
     return false;

@@ -1624,7 +1624,6 @@ public:
 template <typename T>
 TargetTransformInfo::TargetTransformInfo(T Impl)
     : TTIImpl(new Model<T>(Impl)) {
-  errs() << "In TargetTransformInfo::TargetTransformInfo(T Impl)\n";
 }
 
 /// Analysis pass providing the \c TargetTransformInfo.
@@ -1657,19 +1656,15 @@ public:
   // Value semantics. We spell out the constructors for MSVC.
   TargetIRAnalysis(const TargetIRAnalysis &Arg)
       : TTICallback(Arg.TTICallback) {
-        errs() << "In TargetIRAnalysis(const TargetIRAnalysis &Arg)\n";
       }
   TargetIRAnalysis(TargetIRAnalysis &&Arg)
       : TTICallback(std::move(Arg.TTICallback)) {
-        errs() << "In TargetIRAnalysis(TargetIRAnalysis &&Arg)\n";
       }
   TargetIRAnalysis &operator=(const TargetIRAnalysis &RHS) {
-    errs() << "In TargetIRAnalysis &operator=(const TargetIRAnalysis &RHS)\n";
     TTICallback = RHS.TTICallback;
     return *this;
   }
   TargetIRAnalysis &operator=(TargetIRAnalysis &&RHS) {
-    errs() << "In TargetIRAnalysis &operator=(TargetIRAnalysis &&RHS)\n";
     TTICallback = std::move(RHS.TTICallback);
     return *this;
   }

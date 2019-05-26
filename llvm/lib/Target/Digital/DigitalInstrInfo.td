@@ -111,6 +111,9 @@ def EOR     : ArithLogic<0x8, "EOR", xor, IIAlu, GPR, 1>;
 def ST      : TwoRegs<0x26, (outs), (ins GPR:$rs, mem:$rd), "ST $rd, $rs", 
                 [(store i16:$rs, addr:$rd)], IIStore>;
 
+def BRK     : NoReg<0x3e, (outs), (ins), "BRK", [], IIAlu>;
+def RETI    : NoReg<0x3f, (outs), (ins), "RETI", [], IIAlu>;
+
 def JMP      : JumpFR<0x36, "JMP", GPR>;
 
 let isReturn=1, isTerminator=1, isBarrier=1, hasCtrlDep=1 in {

@@ -271,7 +271,6 @@ public:
 
   /// ImmutablePasses are never run.
   bool runOnModule(Module &) override { 
-	  errs() << "In  bool runOnModule(Module &M) inside Pass.h\n";
 	  return false; }
 };
 
