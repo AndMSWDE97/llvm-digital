@@ -30,6 +30,11 @@ class DigitalFunctionInfo : public MachineFunctionInfo {
   /// ReturnAddrIndex - FrameIndex for return slot.
   int ReturnAddrIndex;
 
+  /// BytesToPopOnReturn - Number of bytes function pops on return (in addition
+  /// to the space used by the return address).
+  /// Used on windows platform for stdcall & fastcall name decoration
+  unsigned BytesToPopOnReturn = 0;
+
 public:
   DigitalFunctionInfo() : CalleeSavedFrameSize(0) {}
 
@@ -41,6 +46,8 @@ public:
 
   int getRAIndex() const { return ReturnAddrIndex; }
   void setRAIndex(int Index) { ReturnAddrIndex = Index; }
+
+  unsigned getBytesToPopOnReturn() const { return BytesToPopOnReturn; }
 };
 
 } // End llvm namespace

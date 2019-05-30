@@ -15,7 +15,7 @@
 // Digital profiles and nodes
 //===----------------------------------------------------------------------===//
 
-def SDT_DigitalRet          : SDTypeProfile<0, 1, [SDTCisInt<0>]>;
+def SDT_DigitalRet          : SDTypeProfile<0, 1, [SDTCisVT<0, i16>]>;
 def SDT_DigitalCallSeqStart : SDCallSeqStart<[SDTCisVT<0, i16>]>;
 def SDT_DigitalCallSeqEnd   : SDCallSeqEnd<[SDTCisVT<0, i16>, SDTCisVT<1, i16>]>;
 
@@ -26,7 +26,7 @@ def DigitalCallseq_end :
                      SDNode<"ISD::CALLSEQ_END",   SDT_DigitalCallSeqEnd,
                        [SDNPHasChain, SDNPOptInGlue, SDNPOutGlue]>;
 
-def DigitalRet : SDNode<"DigitalISD::RET", SDTNone,
+def DigitalRet : SDNode<"DigitalISD::RET", SDT_DigitalRet,
                        [SDNPHasChain, SDNPOptInGlue, SDNPVariadic]>;
 
 //===----------------------------------------------------------------------===//
@@ -118,7 +118,7 @@ def JMP      : JumpFR<0x36, "JMP", GPR>;
 
 let isReturn=1, isTerminator=1, isBarrier=1, hasCtrlDep=1 in {
   let hasDelaySlot=1 in
-  def RET : DigitalPseudo<(outs), (ins), "" , [(DigitalRet)]>;
+  def RET : DigitalPseudo<(outs), (ins i16imm:$val), "" , [(DigitalRet timm:$val)]>;
 }
 
 def RRET     : RetBase<GPR>;

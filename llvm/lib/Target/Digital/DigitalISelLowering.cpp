@@ -17,6 +17,7 @@
 #include "DigitalRegisterInfo.h"
 #include "DigitalSubtarget.h"
 #include "DigitalTargetMachine.h"
+#include "DigitalMachineFunction.h"
 #include "llvm/CodeGen/CallingConvLower.h"
 #include "llvm/CodeGen/MachineFrameInfo.h"
 #include "llvm/CodeGen/MachineFunction.h"
@@ -119,6 +120,8 @@ DigitalTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
   if (IsVarArg) {
     report_fatal_error("VarArg not supported");
   }
+  MachineFunction &MF = DAG.getMachineFunction();
+  DigitalFunctionInfo *FuncInfo = MF.getInfo<DigitalFunctionInfo>();
 
   // Stores the assignment of the return value to a location.
   SmallVector<CCValAssign, 16> RVLocs;
@@ -131,6 +134,8 @@ DigitalTargetLowering::LowerReturn(SDValue Chain, CallingConv::ID CallConv,
 
   SDValue Flag;
   SmallVector<SDValue, 4> RetOps(1, Chain);
+
+  RetOps.push_back(DAG.getTargetConstant(FuncInfo->getBytesToPopOnReturn(), DL, MVT::i16));
 
   // Copy the result values into the output registers.
   for (unsigned i = 0, e = RVLocs.size(); i < e; ++i) {
