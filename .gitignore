@@ -4,7 +4,9 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 build/*
-!build/create_build_files_msvc.cmd
-!build/create_build_files_linux.sh
+!build/create_build_files_linux_debug.sh
+!build/create_build_files_linux_release.sh
+!build/create_build_files_msvc_debug.cmd
+!build/create_build_files_msvc_debug.cmd
 !build/README.md
-*,ll
+*.ll
