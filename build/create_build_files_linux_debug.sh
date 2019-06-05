@@ -1,0 +1,2 @@
+#!/bin/bash
+cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_INSTALL_PREFIX=/usr/local -DLLVM_TARGETS_TO_BUILD="Digital" "../llvm"
