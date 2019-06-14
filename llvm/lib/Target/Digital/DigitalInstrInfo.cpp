@@ -132,7 +132,7 @@ bool DigitalInstrInfo::expandPostRAPseudo(MachineInstr &MI) const {
 void DigitalInstrInfo::expandRet(MachineBasicBlock *MBB,
 				 MachineInstr &MI) const {
   
-  BuildMI(*MBB, MI, MI.getDebugLoc(), get(Digital::RET)).addReg(Digital::SP);
+  BuildMI(*MBB, MI, MI.getDebugLoc(), get(Digital::RET)).addReg(Digital::R3);
 }
 
 std::pair<unsigned, unsigned>
