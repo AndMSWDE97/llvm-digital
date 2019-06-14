@@ -344,6 +344,7 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+
   // Compile the module TimeCompilations times to give better compile time
   // metrics.
   for (unsigned I = TimeCompilations; I; --I)
